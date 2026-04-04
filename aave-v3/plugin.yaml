@@ -1,0 +1,33 @@
+schema_version: 1
+name: aave-v3
+version: "0.1.0"
+description: "Lend and borrow crypto assets on Aave V3 — the leading decentralized liquidity protocol"
+author:
+  name: skylavis-sky
+  github: skylavis-sky
+category: defi-protocol
+tags:
+  - lending
+  - borrowing
+  - defi
+  - earn
+  - aave
+  - collateral
+  - health-factor
+license: MIT
+
+components:
+  skill:
+    dir: skills/aave-v3
+
+build:
+  lang: rust
+  binary_name: aave-v3
+  source_repo: skylavis-sky/aave-v3
+  source_commit: "36511c8cb9b51bf2220e526ad860707ffec50827"
+
+api_calls:
+  - "https://eth.llamarpc.com"
+  - "https://polygon.llamarpc.com"
+  - "https://arbitrum.llamarpc.com"
+  - "https://base.llamarpc.com"
