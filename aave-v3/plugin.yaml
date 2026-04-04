@@ -23,8 +23,9 @@ components:
 build:
   lang: rust
   binary_name: aave-v3
-  source_repo: skylavis-sky/aave-v3
-  source_commit: "36511c8cb9b51bf2220e526ad860707ffec50827"
+  source_repo: skylavis-sky/onchainos-plugins
+  source_commit: "342043164644c4441c083a29c51e371cbe7ee868"
+  source_dir: aave-v3
 
 api_calls:
   - "https://eth.llamarpc.com"
