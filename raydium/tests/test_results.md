@@ -25,6 +25,9 @@
 | 6 | Dry-run SOL→USDC swap (no broadcast) | L3 | `raydium swap --dry-run --input-mint So11... --output-mint EPjFWdd5... --amount 1000000` | PASS | `ok: true`, `dry_run: true`, `note: "dry_run: tx not built or broadcast"` | No onchainos call made, wallet not resolved |
 | 7 | Balance pre-check (guardrails) | L4-pre | `onchainos wallet balance --chain 501` | PASS | Balance > 0.003 SOL threshold | Guardrails satisfied |
 | 8 | On-chain SOL→USDC swap (0.001 SOL) | L4 | `raydium swap --input-mint So11... --output-mint EPjFWdd5... --amount 1000000` | PASS | `4RiWKL16piCsq9SmitH81dZju4XcbT9qu6gH7NLPQQeyMXfC8a4yGuZoskpcXQgai2jJVT9LNg7DVwBWhpszLGwZ` | outputAmount: 79681 USDC micro; confirmed on-chain |
+| 9 | [Regression] L2 re-run after --force fix | L2 | `raydium get-token-price --mints EPjFWdd5...` | PASS | USDC = $1.00 | No regression |
+| 10 | [Regression] L3 re-run after --force fix | L3 | `raydium swap --dry-run --input-mint So11... --output-mint EPjFWdd5... --amount 1000000` | PASS | `ok: true`, `dry_run: true` | No regression |
+| 11 | [Regression] L4 re-run after --force fix | L4 | `raydium swap --input-mint So11... --output-mint EPjFWdd5... --amount 1000000` | PASS | `4gDhPAuYmc4Htvs1M8Cabest8Xnf9pqgMPYFXDUVRBgqAiFeAHeUpeWgyPUvURj5SgSiKMpd29CHa5VHTAF2ZwQf` | outputAmount: 79608 USDC micro; confirmed on-chain with --force |
 
 ## Fix Records
 
@@ -34,6 +37,7 @@
 | 2 | `--unsigned-tx` missing `--to` parameter | `onchainos wallet contract-call` requires `--to <program>` even for Solana | Add `--to 675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8` (Raydium AMM V4) | `src/onchainos.rs` |
 | 3 | `computeUnitPriceMicroLamports: "auto"` rejected by Raydium API | API requires numeric string, not literal "auto" | Changed default to `"1000"` | `src/commands/swap.rs` |
 | 4 | `--unsigned-tx` expects base58 but Raydium API returns base64 | onchainos help: "Solana unsigned transaction data (base58)" | Added base64→base58 conversion in `wallet_contract_call_solana()` | `src/onchainos.rs` |
+| 5 | `wallet contract-call` requires `--force` to broadcast | onchainos will not broadcast Solana contract-call without explicit `--force` flag (discovered from Kamino retro) | Added `"--force"` to wallet_contract_call_solana args | `src/onchainos.rs` |
 
 ## Notes
 
