@@ -22,8 +22,8 @@ components:
 build:
   lang: rust
   binary_name: balancer-v2
-  source_repo: skylavis-sky/onchainos-plugins
-  source_commit: "0000000000000000000000000000000000000000"
+  source_repo: GeoGu360/onchainos-plugins
+  source_commit: "c1ae78778cb725018537042fe23565041d93680b"
   source_dir: balancer-v2
 
 api_calls:
