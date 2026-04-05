@@ -1,0 +1,29 @@
+schema_version: 1
+name: umami-finance
+version: "0.1.0"
+description: "Umami Finance GM Vault plugin — deposit USDC/WETH/WBTC into auto-compounding yield vaults on Arbitrum"
+author:
+  name: "GeoGu360"
+  github: "GeoGu360"
+category: defi
+tags:
+  - yield
+  - vault
+  - arbitrum
+  - gmx
+  - erc4626
+license: MIT
+
+components:
+  skill:
+    dir: skills/umami-finance
+
+build:
+  lang: rust
+  binary_name: umami-finance
+  source_repo: skylavis-sky/onchainos-plugins
+  source_commit: "0000000000000000000000000000000000000000"
+  source_dir: umami-finance
+
+api_calls:
+  - "https://arb1.arbitrum.io/rpc"
