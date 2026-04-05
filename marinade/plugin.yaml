@@ -1,0 +1,30 @@
+schema_version: 1
+name: marinade
+version: "0.1.0"
+description: "Marinade Finance liquid staking on Solana — stake SOL to earn mSOL staking rewards"
+author:
+  name: "GeoGu360"
+  github: "GeoGu360"
+category: defi-protocol
+tags:
+  - liquid-staking
+  - solana
+  - msol
+  - defi
+license: MIT
+
+components:
+  skill:
+    dir: skills/marinade
+
+build:
+  lang: rust
+  binary_name: marinade
+  source_repo: skylavis-sky/onchainos-plugins
+  source_commit: "0000000000000000000000000000000000000000"
+  source_dir: marinade
+
+api_calls:
+  - "https://api.marinade.finance/msol/price_sol"
+  - "https://api.mainnet-beta.solana.com"
+  - "https://solscan.io"
