@@ -23,8 +23,8 @@ components:
 build:
   lang: rust
   binary_name: swell-staking
-  source_repo: skylavis-sky/onchainos-plugins
-  source_commit: "0000000000000000000000000000000000000000"
+  source_repo: GeoGu360/onchainos-plugins
+  source_commit: "42159f23361032d508b3793c6402b5ef975132e5"
   source_dir: swell-staking
 
 api_calls:
