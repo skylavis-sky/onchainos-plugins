@@ -23,7 +23,7 @@ build:
   lang: rust
   binary_name: kelp
   source_repo: GeoGu360/onchainos-plugins
-  source_commit: ""
+  source_commit: "ac3386d336f19307acce817f7ab7c3ed57a7e533"
   source_dir: kelp
 
 api_calls:
