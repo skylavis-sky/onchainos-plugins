@@ -26,7 +26,7 @@ pub fn resolve_wallet_solana() -> anyhow::Result<String> {
 /// Submit a pre-built, base64-encoded VersionedTransaction to Solana via onchainos.
 ///
 /// ⚠️  Solana blockhash expires in ~60 seconds. Call this immediately after building the tx.
-/// ⚠️  No --force flag for Solana (only EVM DEX swaps need it).
+/// ⚠️  --force is required for wallet contract-call on Solana (onchainos won't broadcast without it).
 pub async fn wallet_contract_call_solana(
     to: &str,
     serialized_tx: &str,
@@ -56,6 +56,7 @@ pub async fn wallet_contract_call_solana(
             to,
             "--unsigned-tx",
             &tx_base58,
+            "--force", // required — without this onchainos won't broadcast
         ])
         .output()?;
 
