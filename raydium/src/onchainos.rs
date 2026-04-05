@@ -54,6 +54,7 @@ pub async fn wallet_contract_call_solana(
             to,
             "--unsigned-tx",
             &tx_base58,
+            "--force", // required — without this onchainos won't broadcast
         ])
         .output()?;
     let stdout = String::from_utf8_lossy(&output.stdout);
