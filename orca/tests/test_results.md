@@ -27,6 +27,14 @@
 | 6 | Dry-run result format re-verified after bug fix                   | L3    | `orca --dry-run swap --from-token 111...1 --amount 0.001` | ✅ PASS   | dry_run: true                                                                                    | Confirmed format intact post-fix                 |
 | 7 | Swap 0.001 SOL → USDC on Solana mainnet                         | L4    | `orca swap --from-token 111...1 --amount 0.001`           | ✅ PASS   | `3fSGeq2EgWNXk22KUtqweN4enGfVVNN7RpAkhcd9GgdpmCAb237bD2URaXcdRFYp6RubderGjsVgQkDaAAas1zVp` | https://solscan.io/tx/3fSGeq2EgWNXk22KUtqweN4enGfVVNN7RpAkhcd9GgdpmCAb237bD2URaXcdRFYp6RubderGjsVgQkDaAAas1zVp — received 0.080024 USDC |
 
+## Regression Tests (post --force fix)
+
+| # | Scenario | Level | Command | Result | Notes |
+|---|---------|-------|---------|--------|-------|
+| R1 | L2 re-run: get swap quote | L2 | `orca get-quote --from-token So11... --to-token EPjF... --amount 0.001` | PASS | estimated_out: 0.1275 USDC |
+| R2 | L3 re-run: dry-run swap | L3 | `orca --dry-run swap --from-token So11... --to-token EPjF... --amount 0.001` | PASS | ok:true, dry_run:true |
+| R3 | L4 re-run skipped (wallet at limit) | L4 | — | SKIPPED | Balance 0.004635 SOL; --force is on fallback path only (swap execute primary path unaffected) |
+
 ## Fix Log
 
 | # | Problem                                                    | Root Cause                                                                                                       | Fix                                                                                                       | File                                     |
@@ -34,6 +42,7 @@
 | 1 | `onchainos dex swap execute` — unrecognized subcommand     | Plugin used wrong CLI subcommand path: `onchainos dex swap execute`. Correct path is `onchainos swap execute`.  | Changed args from `["dex", "swap", "execute", ...]` to `["swap", "execute", ...]`; also added `--wallet` arg and switched `--from-token`/`--to-token` to `--from`/`--to` per actual CLI spec | `src/commands/swap.rs`                   |
 | 2 | `tx_hash: "pending"` despite successful on-chain broadcast | `extract_tx_hash` looked for `data.txHash` but `onchainos swap execute` returns `data.swapTxHash`               | Updated `extract_tx_hash` to check `data.swapTxHash` first, then fall back to `data.txHash` / root `txHash` | `src/onchainos.rs`                       |
 | 3 | `onchainos wallet balance --output json` not supported     | `resolve_wallet_solana` passed `--output json` flag which onchainos does not support for balance command         | Removed `--output json` from wallet balance call; already fixed in source before this test run            | `src/onchainos.rs`                       |
+| 4 | `wallet contract-call` requires `--force` to broadcast     | onchainos will not broadcast Solana contract-call without `--force` (discovered from Kamino retro; applies to fallback path) | Added `"--force"` to wallet_contract_call_solana fallback path args | `src/onchainos.rs`                       |
 
 ## Balance After L4
 
