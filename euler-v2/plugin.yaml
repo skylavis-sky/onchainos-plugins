@@ -26,7 +26,7 @@ build:
   lang: rust
   binary_name: euler-v2
   source_repo: GeoGu360/onchainos-plugins
-  source_commit: "placeholder"
+  source_commit: "7a2e53c682d5ca40a402982dc777c720d3e2487f"
   source_dir: euler-v2
 
 api_calls:
