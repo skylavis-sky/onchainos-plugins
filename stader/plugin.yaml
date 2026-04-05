@@ -1,0 +1,29 @@
+schema_version: 1
+name: stader
+version: "0.1.0"
+description: "Stake ETH with Stader liquid staking to receive ETHx on Ethereum"
+author:
+  name: "GeoGu360"
+  github: "GeoGu360"
+category: defi-protocol
+tags:
+  - staking
+  - liquid-staking
+  - ethx
+  - stader
+  - ethereum
+license: MIT
+
+components:
+  skill:
+    dir: skills/stader
+
+build:
+  lang: rust
+  binary_name: stader
+  source_repo: skylavis-sky/onchainos-plugins
+  source_commit: "PLACEHOLDER_FILL_AFTER_MONOREPO_PUSH"
+  source_dir: stader
+
+api_calls:
+  - "https://ethereum.publicnode.com"
