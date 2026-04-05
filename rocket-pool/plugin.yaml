@@ -1,0 +1,30 @@
+schema_version: 1
+name: rocket-pool
+version: "0.1.0"
+description: "Decentralised ETH liquid staking via Rocket Pool — stake ETH to receive rETH"
+author:
+  name: "GeoGu360"
+  github: "GeoGu360"
+category: defi-protocol
+tags:
+  - staking
+  - liquid-staking
+  - rocket-pool
+  - reth
+  - ethereum
+license: MIT
+
+components:
+  skill:
+    dir: skills/rocket-pool
+
+build:
+  lang: rust
+  binary_name: rocket-pool
+  source_repo: GeoGu360/onchainos-plugins
+  source_commit: ""
+  source_dir: rocket-pool
+
+api_calls:
+  - "https://ethereum.publicnode.com"
+  - "https://api.rocketpool.net"
