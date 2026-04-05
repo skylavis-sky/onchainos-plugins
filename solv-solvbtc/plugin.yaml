@@ -1,0 +1,32 @@
+schema_version: 1
+name: solv-solvbtc
+version: "0.1.0"
+description: "Solv Protocol SolvBTC -- mint yield-bearing BTC on Arbitrum and Ethereum"
+author:
+  name: skylavis-sky
+  github: skylavis-sky
+category: defi-protocol
+tags:
+  - btc
+  - yield
+  - liquid-btc
+  - arbitrum
+  - ethereum
+license: Apache-2.0
+
+components:
+  skill:
+    dir: skills/solv-solvbtc
+
+build:
+  lang: rust
+  binary_name: solv-solvbtc
+  source_repo: skylavis-sky/onchainos-plugins
+  source_commit: "0000000000000000000000000000000000000000"
+  source_dir: solv-solvbtc
+
+api_calls:
+  - "https://coins.llama.fi/prices/current"
+  - "https://api.llama.fi/tvl/solv-protocol"
+  - "https://arb1.arbitrum.io/rpc"
+  - "https://ethereum.publicnode.com"
