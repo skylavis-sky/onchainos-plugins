@@ -25,7 +25,7 @@ components:
 build:
   lang: rust
   source_repo: skylavis-sky/onchainos-plugins
-  source_commit: d874d51d8e02557ab96ebaa33a7a05bfbbb52076
+  source_commit: 86c9304341a27e2eae53967b6796c5d1de8327bc
   binary_name: across
 
 api_calls:
