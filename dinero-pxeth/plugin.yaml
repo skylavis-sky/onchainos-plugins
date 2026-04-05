@@ -1,0 +1,30 @@
+schema_version: 1
+name: dinero-pxeth
+version: "0.1.0"
+description: "Dinero pxETH liquid staking — deposit ETH to pxETH, stake pxETH to yield-bearing apxETH (ERC-4626)"
+author:
+  name: "GeoGu360"
+  github: "GeoGu360"
+category: defi-protocol
+tags:
+  - liquid-staking
+  - pxeth
+  - apxeth
+  - erc-4626
+  - dinero
+  - pirex
+license: MIT
+
+components:
+  skill:
+    dir: skills/dinero-pxeth
+
+build:
+  lang: rust
+  binary_name: dinero-pxeth
+  source_repo: skylavis-sky/onchainos-plugins
+  source_commit: "0000000000000000000000000000000000000000"
+  source_dir: dinero-pxeth
+
+api_calls:
+  - "https://ethereum.publicnode.com"
