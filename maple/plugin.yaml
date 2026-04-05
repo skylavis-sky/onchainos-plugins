@@ -1,0 +1,33 @@
+schema_version: 1
+name: maple
+version: "0.1.0"
+description: "Maple Finance institutional lending — deposit USDC/USDT into syrup pools to earn yield on Ethereum"
+author:
+  name: GeoGu360
+  github: GeoGu360
+category: defi-protocol
+tags:
+  - lending
+  - yield
+  - defi
+  - earn
+  - usdc
+  - usdt
+  - ethereum
+  - institutional
+license: MIT
+
+components:
+  skill:
+    dir: skills/maple
+
+build:
+  lang: rust
+  binary_name: maple
+  source_repo: skylavis-sky/onchainos-plugins
+  source_commit: "0000000000000000000000000000000000000000"
+  source_dir: maple
+
+api_calls:
+  - "https://ethereum.publicnode.com"
+  - "https://api.maple.finance/v2/graphql"
