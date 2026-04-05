@@ -21,7 +21,7 @@ Rocket Pool is a decentralised Ethereum liquid staking protocol. Users deposit E
 
 - Contract addresses resolved **dynamically** via RocketStorage (`0x1d8f8f00cfa6758d7bE78336684788Fb0ee0Fa46`)
 - Read ops use direct JSON-RPC eth_call to `https://ethereum.publicnode.com`
-- Write ops use `onchainos wallet contract-call --chain 1 --force`
+- Write ops (stake, unstake) require explicit user confirmation before submitting to the network
 
 ## Pre-flight Checks
 
