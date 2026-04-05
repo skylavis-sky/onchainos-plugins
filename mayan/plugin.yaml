@@ -1,0 +1,33 @@
+schema_version: 1
+name: mayan
+version: "0.1.0"
+description: "Mayan cross-chain swap — Swift/MCTP routes between Solana, Ethereum, Arbitrum, Base, Optimism, Polygon, BSC, and Avalanche"
+author:
+  name: skylavis-sky
+  github: skylavis-sky
+license: Apache-2.0
+category: defi-protocol
+tags:
+  - bridge
+  - cross-chain
+  - solana
+  - ethereum
+  - arbitrum
+  - base
+
+components:
+  skill:
+    dir: skills/mayan
+  binary:
+    repo: skylavis-sky/onchainos-plugins
+    asset_pattern: "mayan-{version}-{target}.tar.gz"
+
+build:
+  lang: rust
+  source_repo: skylavis-sky/onchainos-plugins
+  source_commit: 0000000000000000000000000000000000000000
+  binary_name: mayan
+
+api_calls:
+  - price-api.mayan.finance
+  - explorer-api.mayan.finance
