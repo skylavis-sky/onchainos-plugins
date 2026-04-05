@@ -5,7 +5,7 @@ description: "Balancer V2 DEX — swap tokens, query pools, add/remove liquidity
 author:
   name: "GeoGu360"
   github: "GeoGu360"
-category: dex
+category: defi-protocol
 tags:
   - dex
   - amm
@@ -23,7 +23,7 @@ build:
   lang: rust
   binary_name: balancer-v2
   source_repo: GeoGu360/onchainos-plugins
-  source_commit: "c1ae78778cb725018537042fe23565041d93680b"
+  source_commit: "15cd91ec9592f021e7fd8760e409ff92127b01da"
   source_dir: balancer-v2
 
 api_calls:

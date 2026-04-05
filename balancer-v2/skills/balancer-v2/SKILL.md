@@ -1,3 +1,9 @@
+---
+name: balancer-v2
+version: "0.1.0"
+description: "Balancer V2 DEX — swap tokens, query pools, add/remove liquidity on Arbitrum and Ethereum"
+---
+
 # Balancer V2 Skill
 
 Balancer V2 is a DEX and AMM on Ethereum and Arbitrum featuring multi-token weighted pools, stable pools, and a single Vault contract as the unified entry point for all swaps and liquidity operations.
