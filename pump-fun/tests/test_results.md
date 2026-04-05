@@ -65,6 +65,14 @@ The L4 on-chain buy was **BLOCKED** — onchainos's Solana backend does not supp
 
 ---
 
+## Regression Tests (post --force fix)
+
+| # | Scenario | Level | Command | Result | Notes |
+|---|---------|-------|---------|--------|-------|
+| R1 | L2 re-run: get-token-info | L2 | `pump-fun get-token-info --mint 8wLd...pump` | PASS | complete:false, progress:24.9% |
+| R2 | L3 re-run: dry-run buy | L3 | `pump-fun --dry-run buy --mint 8wLd... --sol-amount 1000000 --slippage-bps 200` | PASS | ok:true, dry_run:true |
+| R3 | L4 remains blocked | L4 | — | BLOCKED | onchainos does not support pump.fun bonding curve via --unsigned-tx; unrelated to --force fix |
+
 ## Bug Fixes
 
 | # | Issue                                    | Root Cause                                                                                                                    | Fix                                                                                              | File                                    |
@@ -73,6 +81,7 @@ The L4 on-chain buy was **BLOCKED** — onchainos's Solana backend does not supp
 | 2 | onchainos wallet address not resolved    | `resolve_wallet_solana()` read `json["data"]["address"]` but actual response is `json["data"]["details"][0]["tokenAssets"][0]["address"]`. | Updated JSON path to match actual onchainos response shape.                                      | `src/onchainos.rs` line 14              |
 | 3 | Buy output hardcoded `ok: true` even on broadcast failure | `BuyOutput.ok` was set to `true` unconditionally regardless of onchainos response | Added check for `result["ok"]` and bail with error if broadcast fails | `src/commands/buy.rs` |
 | 4 | `--unsigned-tx` expected base58 but pumpfun crate produced base64 | `onchainos wallet contract-call --unsigned-tx` requires base58 encoding; bincode serialization → base64 was used | Added base64→base58 conversion via `bs58` crate | `src/onchainos.rs` |
+| 5 | `wallet contract-call` requires `--force` to broadcast | onchainos will not broadcast Solana contract-call without explicit `--force` flag (discovered from Kamino retro) | Added `"--force"` to wallet_contract_call_solana args | `src/onchainos.rs` |
 
 ---
 
