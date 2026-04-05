@@ -22,7 +22,7 @@ build:
   lang: rust
   binary_name: yearn-finance
   source_repo: skylavis-sky/onchainos-plugins
-  source_commit: "0000000000000000000000000000000000000000"
+  source_commit: "4b8a5d1f81cf3cb00a98e0409a7685def1362bc0"
   source_dir: yearn-finance
 
 api_calls:
