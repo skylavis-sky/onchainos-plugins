@@ -9,6 +9,20 @@ metadata:
 
 # Aave V2 Skill
 
+## ⚠️ Protocol Status: Deprecated
+
+Aave V2 has been **officially deprecated** by Aave governance. All reserves are **frozen** — new deposits and borrows are rejected at the contract level.
+
+**What still works:**
+- ✅ `reserves` / `positions` — read market data and view existing positions
+- ✅ `withdraw` — existing suppliers can withdraw their funds
+- ❌ `deposit` — will fail on-chain (reserves frozen)
+- ❌ `borrow` / `repay` — dry-run only regardless
+
+**Recommendation:** For active lending/borrowing, use **Aave V3** (`aave-v3`) instead.
+
+---
+
 Interact with the Aave V2 classic LendingPool on Ethereum mainnet.
 
 ## Commands
