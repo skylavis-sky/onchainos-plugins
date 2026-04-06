@@ -17,7 +17,8 @@ pub async fn run(
     dry_run: bool,
 ) -> anyhow::Result<()> {
     let cfg = get_chain_config(chain_id)?;
-    let borrower = from.unwrap_or("0x0000000000000000000000000000000000000000");
+    let borrower_string = onchainos::resolve_wallet(from, chain_id).await?;
+    let borrower = borrower_string.as_str();
 
     // Fetch market params from GraphQL API
     let market = api::get_market(market_id, chain_id).await
@@ -70,7 +71,7 @@ pub async fn run(
         eprintln!("[morpho] [dry-run] Would approve: onchainos wallet contract-call --chain {} --to {} --input-data {}", chain_id, loan_token, approve_calldata);
     }
     let approve_result = onchainos::wallet_contract_call(chain_id, &loan_token, &approve_calldata, from, None, dry_run).await?;
-    let approve_tx = onchainos::extract_tx_hash(&approve_result);
+    let approve_tx = onchainos::extract_tx_hash_or_err(&approve_result)?;
 
     // Step 2: repay(marketParams, assets, shares, onBehalf, data)
     let repay_calldata = calldata::encode_repay(&mp, repay_assets, repay_shares, borrower);
@@ -89,7 +90,7 @@ pub async fn run(
         None,
         dry_run,
     ).await?;
-    let tx_hash = onchainos::extract_tx_hash(&result);
+    let tx_hash = onchainos::extract_tx_hash_or_err(&result)?;
 
     let output = serde_json::json!({
         "ok": true,

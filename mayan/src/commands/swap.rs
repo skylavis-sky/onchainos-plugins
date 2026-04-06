@@ -9,7 +9,7 @@ use crate::config::{
     MAYAN_FORWARDER_CONTRACT, SOLANA_CHAIN_ID,
 };
 use crate::onchainos::{
-    base64_to_base58, extract_tx_hash, resolve_wallet_evm, resolve_wallet_solana,
+    base64_to_base58, extract_tx_hash_or_err, resolve_wallet_evm, resolve_wallet_solana,
     wallet_contract_call_evm, wallet_contract_call_solana,
 };
 
@@ -239,7 +239,7 @@ async fn swap_from_solana(
         return Err(anyhow!("Solana contract call failed: {}", err));
     }
 
-    Ok(extract_tx_hash(&result))
+    Ok(extract_tx_hash_or_err(&result)?)
 }
 
 /// Execute EVM-sourced swap (handles both native ETH and ERC-20)
@@ -325,7 +325,7 @@ async fn swap_from_evm(
             return Err(anyhow!("ERC-20 approve failed: {}", err));
         }
 
-        let approve_hash = extract_tx_hash(&approve_result);
+        let approve_hash = extract_tx_hash_or_err(&approve_result)?;
         println!("  Approve tx: {}", approve_hash);
         println!("  Waiting 3s for approve to confirm...");
         if !dry_run {
@@ -355,7 +355,7 @@ async fn swap_from_evm(
         return Err(anyhow!("EVM swap failed: {}", err));
     }
 
-    Ok(extract_tx_hash(&result))
+    Ok(extract_tx_hash_or_err(&result)?)
 }
 
 /// Extract base64-encoded serialized transaction from Solana API response.

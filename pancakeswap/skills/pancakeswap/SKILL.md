@@ -8,9 +8,13 @@ description: "Swap tokens and manage liquidity on PancakeSwap V3"
 
 Swap tokens and manage concentrated liquidity on PancakeSwap V3 — the leading DEX on BNB Chain (BSC) and Base.
 
-**Trigger phrases:** "pancakeswap", "swap on pancake", "PCS swap", "add liquidity pancakeswap", "remove liquidity pancakeswap", "pancakeswap pool", "PancakeSwap V3", "煎饼交换", "在 PancakeSwap 上兑换", "PancakeSwap 添加流动性", "PancakeSwap 撤出流动性"
+**Trigger phrases:** "pancakeswap", "swap on pancake", "PCS swap", "add liquidity pancakeswap", "remove liquidity pancakeswap", "pancakeswap pool", "PancakeSwap V3"
 
 ---
+
+## Do NOT use for
+
+Do NOT use for: PancakeSwap V2 AMM swaps (use pancakeswap-v2 skill), concentrated liquidity farming (use pancakeswap-clmm skill), non-PancakeSwap DEXes
 
 ## Commands
 
@@ -18,7 +22,7 @@ Swap tokens and manage concentrated liquidity on PancakeSwap V3 — the leading 
 
 Get the expected output amount for a token swap without executing any transaction.
 
-**Trigger phrases:** "get quote", "how much will I get", "price for swap", "quote pancakeswap", "报价"
+**Trigger phrases:** "get quote", "how much will I get", "price for swap", "quote pancakeswap"
 
 ```
 pancakeswap quote \
@@ -45,7 +49,7 @@ This command queries QuoterV2 via `eth_call` (no transaction, no gas cost). It t
 
 Swap an exact input amount of one token for the maximum available output via PancakeSwap V3 SmartRouter.
 
-**Trigger phrases:** "swap tokens", "exchange tokens", "trade on pancakeswap", "sell token", "buy token pancake", "兑换代币", "在 PancakeSwap 上交易"
+**Trigger phrases:** "swap tokens", "exchange tokens", "trade on pancakeswap", "sell token", "buy token pancake"
 
 ```
 pancakeswap swap \
@@ -84,7 +88,7 @@ pancakeswap swap \
 
 Query PancakeV3Factory for all pools across all fee tiers for a given token pair.
 
-**Trigger phrases:** "show pools", "list pancakeswap pools", "find pool", "pool info", "liquidity pool", "查看资金池"
+**Trigger phrases:** "show pools", "list pancakeswap pools", "find pool", "pool info", "liquidity pool"
 
 ```
 pancakeswap pools \
@@ -106,7 +110,7 @@ Returns pool addresses, liquidity, and current price (sqrtPriceX96) for each fee
 
 View all active PancakeSwap V3 LP positions for a wallet address.
 
-**Trigger phrases:** "my positions", "show LP positions", "view liquidity positions", "my pancakeswap LP", "查看我的流动性仓位"
+**Trigger phrases:** "my positions", "show LP positions", "view liquidity positions", "my pancakeswap LP"
 
 ```
 pancakeswap positions \
@@ -127,7 +131,7 @@ Queries TheGraph subgraph first; falls back to on-chain enumeration via Nonfungi
 
 Mint a new V3 LP position via NonfungiblePositionManager.
 
-**Trigger phrases:** "add liquidity", "provide liquidity", "deposit to pool", "mint LP position", "添加流动性", "提供流动性"
+**Trigger phrases:** "add liquidity", "provide liquidity", "deposit to pool", "mint LP position"
 
 ```
 pancakeswap add-liquidity \
@@ -173,7 +177,7 @@ pancakeswap add-liquidity \
 
 Remove liquidity from an existing V3 position. This always performs two steps: `decreaseLiquidity` then `collect`.
 
-**Trigger phrases:** "remove liquidity", "withdraw liquidity", "close LP position", "collect fees", "撤出流动性", "提取流动性"
+**Trigger phrases:** "remove liquidity", "withdraw liquidity", "close LP position", "collect fees"
 
 ```
 pancakeswap remove-liquidity \

@@ -10,16 +10,16 @@ use clap::{Parser, Subcommand};
 #[derive(Parser)]
 #[command(name = "morpho", version = "0.1.0", about = "Supply, borrow and earn yield on Morpho — a permissionless lending protocol")]
 struct Cli {
-    /// Chain ID: 1 (Ethereum) or 8453 (Base)
-    #[arg(long, default_value = "1")]
+    /// Chain ID: 1 (Ethereum) or 8453 (Base) — can also be passed per subcommand
+    #[arg(long, default_value = "1", global = true)]
     chain: u64,
 
-    /// Simulate without broadcasting on-chain
-    #[arg(long)]
+    /// Simulate without broadcasting on-chain — can also be passed per subcommand
+    #[arg(long, global = true)]
     dry_run: bool,
 
     /// Wallet address (defaults to active onchainos wallet)
-    #[arg(long)]
+    #[arg(long, global = true)]
     from: Option<String>,
 
     #[command(subcommand)]
@@ -41,6 +41,14 @@ enum Commands {
         /// Human-readable amount (e.g. 1000 or 0.5)
         #[arg(long)]
         amount: String,
+
+        /// Chain ID (overrides global --chain)
+        #[arg(long)]
+        chain: Option<u64>,
+
+        /// Simulate without broadcasting (overrides global --dry-run)
+        #[arg(long)]
+        dry_run: bool,
     },
 
     /// Withdraw from a MetaMorpho vault (ERC-4626)
@@ -60,6 +68,14 @@ enum Commands {
         /// Withdraw entire balance
         #[arg(long)]
         all: bool,
+
+        /// Chain ID (overrides global --chain)
+        #[arg(long)]
+        chain: Option<u64>,
+
+        /// Simulate without broadcasting (overrides global --dry-run)
+        #[arg(long)]
+        dry_run: bool,
     },
 
     /// Borrow from a Morpho Blue market
@@ -71,6 +87,14 @@ enum Commands {
         /// Human-readable amount to borrow
         #[arg(long)]
         amount: String,
+
+        /// Chain ID (overrides global --chain)
+        #[arg(long)]
+        chain: Option<u64>,
+
+        /// Simulate without broadcasting (overrides global --dry-run)
+        #[arg(long)]
+        dry_run: bool,
     },
 
     /// Repay Morpho Blue debt
@@ -86,6 +110,14 @@ enum Commands {
         /// Repay entire outstanding balance
         #[arg(long)]
         all: bool,
+
+        /// Chain ID (overrides global --chain)
+        #[arg(long)]
+        chain: Option<u64>,
+
+        /// Simulate without broadcasting (overrides global --dry-run)
+        #[arg(long)]
+        dry_run: bool,
     },
 
     /// View user positions and health factors
@@ -107,10 +139,26 @@ enum Commands {
         /// Human-readable amount of collateral to supply
         #[arg(long)]
         amount: String,
+
+        /// Chain ID (overrides global --chain)
+        #[arg(long)]
+        chain: Option<u64>,
+
+        /// Simulate without broadcasting (overrides global --dry-run)
+        #[arg(long)]
+        dry_run: bool,
     },
 
     /// Claim Merkl rewards (P1)
-    ClaimRewards,
+    ClaimRewards {
+        /// Chain ID (overrides global --chain)
+        #[arg(long)]
+        chain: Option<u64>,
+
+        /// Simulate without broadcasting (overrides global --dry-run)
+        #[arg(long)]
+        dry_run: bool,
+    },
 
     /// List MetaMorpho vaults with APYs (P1)
     Vaults {
@@ -123,37 +171,49 @@ enum Commands {
 #[tokio::main]
 async fn main() {
     let cli = Cli::parse();
-    let chain_id = cli.chain;
-    let dry_run = cli.dry_run;
+    let global_chain = cli.chain;
+    let global_dry_run = cli.dry_run;
     let from = cli.from.as_deref();
 
     let result = match cli.command {
-        Commands::Supply { vault, asset, amount } => {
+        Commands::Supply { vault, asset, amount, chain, dry_run } => {
+            let chain_id = chain.unwrap_or(global_chain);
+            let dry_run = dry_run || global_dry_run;
             commands::supply::run(&vault, &asset, &amount, chain_id, from, dry_run).await
         }
-        Commands::Withdraw { vault, asset, amount, all } => {
+        Commands::Withdraw { vault, asset, amount, all, chain, dry_run } => {
+            let chain_id = chain.unwrap_or(global_chain);
+            let dry_run = dry_run || global_dry_run;
             commands::withdraw::run(&vault, &asset, amount.as_deref(), all, chain_id, from, dry_run).await
         }
-        Commands::Borrow { market_id, amount } => {
+        Commands::Borrow { market_id, amount, chain, dry_run } => {
+            let chain_id = chain.unwrap_or(global_chain);
+            let dry_run = dry_run || global_dry_run;
             commands::borrow::run(&market_id, &amount, chain_id, from, dry_run).await
         }
-        Commands::Repay { market_id, amount, all } => {
+        Commands::Repay { market_id, amount, all, chain, dry_run } => {
+            let chain_id = chain.unwrap_or(global_chain);
+            let dry_run = dry_run || global_dry_run;
             commands::repay::run(&market_id, amount.as_deref(), all, chain_id, from, dry_run).await
         }
         Commands::Positions => {
-            commands::positions::run(chain_id, from).await
+            commands::positions::run(global_chain, from).await
         }
         Commands::Markets { asset } => {
-            commands::markets::run(chain_id, asset.as_deref()).await
+            commands::markets::run(global_chain, asset.as_deref()).await
         }
-        Commands::SupplyCollateral { market_id, amount } => {
+        Commands::SupplyCollateral { market_id, amount, chain, dry_run } => {
+            let chain_id = chain.unwrap_or(global_chain);
+            let dry_run = dry_run || global_dry_run;
             commands::supply_collateral::run(&market_id, &amount, chain_id, from, dry_run).await
         }
-        Commands::ClaimRewards => {
+        Commands::ClaimRewards { chain, dry_run } => {
+            let chain_id = chain.unwrap_or(global_chain);
+            let dry_run = dry_run || global_dry_run;
             commands::claim_rewards::run(chain_id, from, dry_run).await
         }
         Commands::Vaults { asset } => {
-            commands::vaults::run(chain_id, asset.as_deref()).await
+            commands::vaults::run(global_chain, asset.as_deref()).await
         }
     };
 

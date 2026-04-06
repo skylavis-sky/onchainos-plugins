@@ -124,8 +124,8 @@ pub async fn run(
     )
     .await?;
 
-    let tx_hash = onchainos::extract_tx_hash(&result);
-    let explorer = config::explorer_url(chain_id, tx_hash);
+    let tx_hash = onchainos::extract_tx_hash_or_err(&result)?;
+    let explorer = config::explorer_url(chain_id, &tx_hash);
     let pool_name = pool.map(|p| p.name.as_str()).unwrap_or("unknown");
 
     println!(

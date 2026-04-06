@@ -40,7 +40,7 @@ pub fn get_market_config(chain_id: u64, market: &str) -> anyhow::Result<MarketCo
             base_asset: "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8",
             base_asset_decimals: 6,
             base_asset_symbol: "USDC",
-            rpc_url: "https://arb1.arbitrum.io/rpc",
+            rpc_url: "https://arbitrum-one-rpc.publicnode.com",
         }),
         (137, "usdc") => Ok(MarketConfig {
             chain_id: 137,
@@ -64,7 +64,7 @@ pub fn default_rpc_url(chain_id: u64) -> &'static str {
     match chain_id {
         1 => "https://ethereum.publicnode.com",
         8453 => "https://base-rpc.publicnode.com",
-        42161 => "https://arb1.arbitrum.io/rpc",
+        42161 => "https://arbitrum-one-rpc.publicnode.com",
         137 => "https://polygon-rpc.com",
         _ => "https://base-rpc.publicnode.com",
     }

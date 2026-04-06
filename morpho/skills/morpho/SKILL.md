@@ -1,6 +1,6 @@
 ---
 name: morpho
-description: "Supply, borrow and earn yield on Morpho — a permissionless lending protocol with $5B+ TVL. Trigger phrases: supply to morpho, deposit to morpho vault, borrow from morpho, repay morpho loan, morpho health factor, my morpho positions, morpho interest rates, claim morpho rewards, morpho markets, metamorpho vaults. Chinese: 在Morpho存款, Morpho借款, 还Morpho款, Morpho健康因子, 我的Morpho仓位, Morpho利率, 领取Morpho奖励"
+description: "Supply, borrow and earn yield on Morpho — a permissionless lending protocol with $5B+ TVL. Trigger phrases: supply to morpho, deposit to morpho vault, borrow from morpho, repay morpho loan, morpho health factor, my morpho positions, morpho interest rates, claim morpho rewards, morpho markets, metamorpho vaults."
 license: MIT
 metadata:
   author: skylavis-sky
@@ -8,6 +8,14 @@ metadata:
 ---
 
 # Morpho Skill
+
+## Do NOT use for...
+
+- General ERC-20 token swaps or DEX trading — use a swap plugin instead
+- Aave, Compound, or other lending protocols — use the appropriate plugin
+- NFT operations or non-lending DeFi activities
+- Staking ETH for liquid staking tokens (stETH, rETH) — use a staking plugin
+- Any chain other than Ethereum (1) or Base (8453)
 
 ## Overview
 

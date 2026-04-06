@@ -1,12 +1,12 @@
-use std::process::Command;
 use serde_json::Value;
 
 /// Get the currently logged-in wallet address for the given chain.
-pub fn resolve_wallet(chain_id: u64) -> anyhow::Result<String> {
+pub async fn resolve_wallet(chain_id: u64) -> anyhow::Result<String> {
     let chain_str = chain_id.to_string();
-    let output = Command::new("onchainos")
-        .args(["wallet", "balance", "--chain", &chain_str, "--output", "json"])
-        .output()?;
+    let output = tokio::process::Command::new("onchainos")
+        .args(["wallet", "balance", "--chain", &chain_str])
+        .output()
+        .await?;
     let json: Value = serde_json::from_str(&String::from_utf8_lossy(&output.stdout))?;
     Ok(json["data"]["address"].as_str().unwrap_or("").to_string())
 }
@@ -60,17 +60,26 @@ pub async fn wallet_contract_call(
         args.push("--force".to_string());
     }
 
-    let output = Command::new("onchainos").args(&args).output()?;
+    let output = tokio::process::Command::new("onchainos")
+        .args(&args)
+        .output()
+        .await?;
     let stdout = String::from_utf8_lossy(&output.stdout);
     Ok(serde_json::from_str(&stdout)
         .unwrap_or_else(|_| serde_json::json!({ "ok": false, "error": stdout.to_string() })))
 }
 
-/// Extract txHash from a wallet contract-call response.
-/// Response shape: {"ok":true,"data":{"txHash":"0x..."}}
-pub fn extract_tx_hash(result: &Value) -> &str {
+/// Extract txHash from a wallet contract-call response, or return an error if the call failed.
+pub fn extract_tx_hash_or_err(result: &Value) -> anyhow::Result<String> {
+    if result["ok"].as_bool() != Some(true) {
+        let err_msg = result["error"].as_str()
+            .or_else(|| result["message"].as_str())
+            .unwrap_or("unknown error");
+        return Err(anyhow::anyhow!("contract-call failed: {}", err_msg));
+    }
     result["data"]["txHash"]
         .as_str()
         .or_else(|| result["txHash"].as_str())
-        .unwrap_or("pending")
+        .map(|s| s.to_string())
+        .ok_or_else(|| anyhow::anyhow!("no txHash in contract-call response"))
 }

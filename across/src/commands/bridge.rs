@@ -128,7 +128,7 @@ pub async fn run(args: BridgeArgs) -> anyhow::Result<()> {
                     approve_result["error"].as_str().unwrap_or("unknown error")
                 );
             }
-            let approve_tx = onchainos::extract_tx_hash(&approve_result);
+            let approve_tx = onchainos::extract_tx_hash_or_err(&approve_result)?;
             println!("Approve tx: {}", approve_tx);
             println!("Waiting {}s for approval to confirm...", APPROVE_DELAY_SECS);
             sleep(Duration::from_secs(APPROVE_DELAY_SECS)).await;
@@ -181,7 +181,7 @@ pub async fn run(args: BridgeArgs) -> anyhow::Result<()> {
         println!("No on-chain transactions were submitted.");
         println!("Bridge calldata: {}", deposit_calldata);
         println!("ETH value (wei): {:?}", eth_value);
-        println!("Simulated txHash: {}", onchainos::extract_tx_hash(&deposit_result));
+        println!("Simulated txHash: {}", deposit_result["data"]["txHash"].as_str().unwrap_or("0x0000000000000000000000000000000000000000000000000000000000000000"));
         return Ok(());
     }
 
@@ -192,7 +192,7 @@ pub async fn run(args: BridgeArgs) -> anyhow::Result<()> {
             deposit_result["error"].as_str().unwrap_or("unknown error")
         );
     }
-    let deposit_tx_hash = onchainos::extract_tx_hash(&deposit_result);
+    let deposit_tx_hash = onchainos::extract_tx_hash_or_err(&deposit_result)?;
     println!("\nDeposit submitted! tx: {}", deposit_tx_hash);
     println!("Estimated fill time: {} seconds", fill_time);
 

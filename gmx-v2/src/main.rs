@@ -10,12 +10,12 @@ use clap::{Parser, Subcommand};
 #[derive(Parser)]
 #[command(name = "gmx-v2", about = "GMX V2 perpetuals and liquidity on Arbitrum/Avalanche")]
 struct Cli {
-    /// Target chain: "arbitrum" or "avalanche" (default: arbitrum)
-    #[arg(long, default_value = "arbitrum")]
+    /// Target chain: "arbitrum" or "avalanche" (default: arbitrum) — can also be passed per subcommand
+    #[arg(long, default_value = "arbitrum", global = true)]
     chain: String,
 
-    /// Simulate without broadcasting on-chain transactions
-    #[arg(long)]
+    /// Simulate without broadcasting on-chain transactions — can also be passed per subcommand
+    #[arg(long, global = true)]
     dry_run: bool,
 
     #[command(subcommand)]
@@ -83,25 +83,39 @@ async fn run(cli: Cli) -> anyhow::Result<()> {
             commands::get_orders::run(&cli.chain, args).await
         }
         Commands::OpenPosition(args) => {
-            commands::open_position::run(&cli.chain, cli.dry_run, args).await
+            let chain = args.chain.as_deref().unwrap_or(&cli.chain).to_string();
+            let dry_run = args.dry_run || cli.dry_run;
+            commands::open_position::run(&chain, dry_run, args).await
         }
         Commands::ClosePosition(args) => {
-            commands::close_position::run(&cli.chain, cli.dry_run, args).await
+            let chain = args.chain.as_deref().unwrap_or(&cli.chain).to_string();
+            let dry_run = args.dry_run || cli.dry_run;
+            commands::close_position::run(&chain, dry_run, args).await
         }
         Commands::PlaceOrder(args) => {
-            commands::place_order::run(&cli.chain, cli.dry_run, args).await
+            let chain = args.chain.as_deref().unwrap_or(&cli.chain).to_string();
+            let dry_run = args.dry_run || cli.dry_run;
+            commands::place_order::run(&chain, dry_run, args).await
         }
         Commands::CancelOrder(args) => {
-            commands::cancel_order::run(&cli.chain, cli.dry_run, args).await
+            let chain = args.chain.as_deref().unwrap_or(&cli.chain).to_string();
+            let dry_run = args.dry_run || cli.dry_run;
+            commands::cancel_order::run(&chain, dry_run, args).await
         }
         Commands::DepositLiquidity(args) => {
-            commands::deposit_liquidity::run(&cli.chain, cli.dry_run, args).await
+            let chain = args.chain.as_deref().unwrap_or(&cli.chain).to_string();
+            let dry_run = args.dry_run || cli.dry_run;
+            commands::deposit_liquidity::run(&chain, dry_run, args).await
         }
         Commands::WithdrawLiquidity(args) => {
-            commands::withdraw_liquidity::run(&cli.chain, cli.dry_run, args).await
+            let chain = args.chain.as_deref().unwrap_or(&cli.chain).to_string();
+            let dry_run = args.dry_run || cli.dry_run;
+            commands::withdraw_liquidity::run(&chain, dry_run, args).await
         }
         Commands::ClaimFundingFees(args) => {
-            commands::claim_funding_fees::run(&cli.chain, cli.dry_run, args).await
+            let chain = args.chain.as_deref().unwrap_or(&cli.chain).to_string();
+            let dry_run = args.dry_run || cli.dry_run;
+            commands::claim_funding_fees::run(&chain, dry_run, args).await
         }
     }
 }

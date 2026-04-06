@@ -109,7 +109,7 @@ pub async fn run(
         false,
     )
     .await?;
-    let approve_tx = onchainos::extract_tx_hash(&approve_result);
+    let approve_tx = onchainos::extract_tx_hash_or_err(&approve_result)?;
 
     // Step 2: 3-second delay to avoid nonce collision
     tokio::time::sleep(std::time::Duration::from_secs(3)).await;
@@ -124,7 +124,7 @@ pub async fn run(
         false,
     )
     .await?;
-    let repay_tx = onchainos::extract_tx_hash(&repay_result);
+    let repay_tx = onchainos::extract_tx_hash_or_err(&repay_result)?;
 
     // Verify remaining borrow balance
     let remaining = rpc::get_borrow_balance_of(cfg.comet_proxy, &wallet, cfg.rpc_url)

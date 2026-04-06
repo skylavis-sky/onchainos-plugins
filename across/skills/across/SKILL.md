@@ -8,6 +8,10 @@ chains: [1, 10, 137, 8453, 42161]
 
 # Across Protocol Bridge Plugin
 
+## Do NOT use for
+
+Do NOT use for: same-chain transfers, swaps without bridging, non-Across bridges (use deBridge or Mayan skill instead)
+
 ## Overview
 
 This plugin enables cross-chain token bridging via Across Protocol. It uses the Across REST API for off-chain quotes and route discovery, and submits on-chain transactions via `onchainos wallet contract-call` to the SpokePool contract on the origin chain.

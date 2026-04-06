@@ -1,6 +1,6 @@
 ---
 name: compound-v3
-description: "Compound V3 (Comet) lending plugin: supply collateral, borrow/repay the base asset, and claim COMP rewards. Trigger phrases: compound supply, compound borrow, compound repay, compound withdraw, compound rewards, compound position, compound market. Chinese: 在Compound供应, 从Compound借款, 还款Compound, 提取Compound抵押品, 领取COMP奖励"
+description: "Compound V3 (Comet) lending plugin: supply collateral, borrow/repay the base asset, and claim COMP rewards. Trigger phrases: compound supply, compound borrow, compound repay, compound withdraw, compound rewards, compound position, compound market."
 license: MIT
 metadata:
   author: skylavis-sky
@@ -186,6 +186,16 @@ All write operations support `--dry-run`. In dry-run mode:
 - No transactions are submitted
 - The expected calldata, steps, and amounts are returned as JSON
 - Use this to preview before asking for user confirmation
+
+## Do NOT use for
+
+- Non-Compound protocols (Aave, Morpho, Spark, etc.)
+- DEX swaps or token exchanges (use a swap plugin instead)
+- Yield tokenization (use Pendle plugin instead)
+- Bridging assets between chains
+- Staking or liquid staking (use Lido or similar plugins)
+
+---
 
 ## Error Responses
 

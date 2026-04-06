@@ -1,11 +1,19 @@
 ---
 name: lido
-description: "Lido liquid staking plugin — stake ETH to get stETH, wrap/unwrap wstETH, request and claim ETH withdrawals. Trigger phrases: stake ETH lido, lido staking, stake to lido, lido liquid staking, lido stETH, convert stETH to wstETH, wrap stETH, unwrap wstETH, request lido withdrawal, claim lido ETH, lido withdraw. Chinese: lido质押, 质押以太坊lido, stETH余额, wstETH转换, lido提现"
+description: "Lido liquid staking plugin — stake ETH to get stETH, wrap/unwrap wstETH, request and claim ETH withdrawals. Trigger phrases: stake ETH lido, lido staking, stake to lido, lido liquid staking, lido stETH, convert stETH to wstETH, wrap stETH, unwrap wstETH, request lido withdrawal, claim lido ETH, lido withdraw."
 license: MIT
 metadata:
   author: skylavis-sky
   version: "0.1.0"
 ---
+
+## Do NOT use for...
+
+- Staking on protocols other than Lido (e.g. Rocket Pool, Frax, EigenLayer)
+- General ERC-20 token swaps or DEX trading
+- Lending, borrowing, or yield farming on Morpho/Aave/Compound
+- Chains other than Ethereum (1), Arbitrum (42161), Base (8453), or Optimism (10)
+- Claiming Merkl or protocol rewards unrelated to Lido staking
 
 ## Architecture
 

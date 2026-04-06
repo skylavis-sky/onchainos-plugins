@@ -8,6 +8,10 @@ chains: [1, 10, 56, 137, 501, 8453, 42161, 43114]
 
 # Mayan Cross-Chain Swap Plugin
 
+## Do NOT use for
+
+Do NOT use for: same-chain swaps, non-Mayan bridges, Wormhole direct interactions
+
 ## Overview
 
 Mayan cross-chain swap. Move tokens between Solana, Ethereum, Arbitrum, Base,

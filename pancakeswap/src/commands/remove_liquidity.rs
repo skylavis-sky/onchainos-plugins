@@ -63,7 +63,7 @@ pub async fn run(args: RemoveLiquidityArgs) -> Result<()> {
         println!("  [dry-run] onchainos wallet contract-call --chain {} --to {} --input-data {}", args.chain, cfg.npm, decrease_calldata);
     } else {
         let r = crate::onchainos::wallet_contract_call(args.chain, cfg.npm, &decrease_calldata, None, None, false).await?;
-        println!("  decreaseLiquidity tx: {}", crate::onchainos::extract_tx_hash(&r));
+        println!("  decreaseLiquidity tx: {}", crate::onchainos::extract_tx_hash_or_err(&r)?);
         // Wait for nonce to settle before collect
         tokio::time::sleep(std::time::Duration::from_secs(5)).await;
     }
@@ -85,7 +85,7 @@ pub async fn run(args: RemoveLiquidityArgs) -> Result<()> {
     }
 
     let r = crate::onchainos::wallet_contract_call(args.chain, cfg.npm, &collect_calldata, None, None, false).await?;
-    println!("  collect tx: {}", crate::onchainos::extract_tx_hash(&r));
+    println!("  collect tx: {}", crate::onchainos::extract_tx_hash_or_err(&r)?);
     println!("\nLiquidity removed and tokens collected successfully!");
 
     Ok(())

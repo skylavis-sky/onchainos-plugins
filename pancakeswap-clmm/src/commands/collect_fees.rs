@@ -28,8 +28,10 @@ pub async fn run(
     }
 
     // Resolve recipient address (must not be zero) — only needed for non-dry-run
-    let fee_recipient = recipient
-        .unwrap_or_else(|| onchainos::resolve_wallet(chain_id).unwrap_or_default());
+    let fee_recipient = match recipient {
+        Some(addr) => addr,
+        None => onchainos::resolve_wallet(chain_id).await.unwrap_or_default(),
+    };
     if fee_recipient.is_empty() {
         anyhow::bail!("Cannot resolve wallet address. Pass --recipient or ensure onchainos is logged in.");
     }
@@ -81,7 +83,7 @@ pub async fn run(
     )
     .await?;
 
-    let tx_hash = onchainos::extract_tx_hash(&result);
+    let tx_hash = onchainos::extract_tx_hash_or_err(&result)?;
 
     println!(
         "{}",

@@ -1,11 +1,19 @@
 ---
 name: gmx-v2
-description: "Trade perpetuals and spot on GMX V2 — open/close leveraged positions, place limit/stop orders, add/remove GM pool liquidity, query markets and positions. Trigger phrases: open position GMX, close position GMX, GMX trade, GMX leverage, GMX liquidity, deposit GM pool, withdraw GM pool, GMX stop loss, GMX take profit, cancel order GMX, claim funding fees GMX. Chinese: GMX开仓, GMX平仓, GMX杠杆交易, GMX流动性, GMX止损, GMX止盈"
+description: "Trade perpetuals and spot on GMX V2 — open/close leveraged positions, place limit/stop orders, add/remove GM pool liquidity, query markets and positions. Trigger phrases: open position GMX, close position GMX, GMX trade, GMX leverage, GMX liquidity, deposit GM pool, withdraw GM pool, GMX stop loss, GMX take profit, cancel order GMX, claim funding fees GMX."
 license: MIT
 metadata:
   author: skylavis-sky
   version: "0.1.0"
 ---
+
+## Do NOT use for...
+
+- Spot swaps or DEX trades without leverage — use a swap/DEX plugin instead
+- Lending, borrowing, or yield farming (Morpho, Aave, Compound)
+- Lido staking or liquid staking tokens
+- Chains other than Arbitrum (42161) or Avalanche (43114)
+- GMX V1 (this plugin is for V2 only)
 
 ## Architecture
 
@@ -104,12 +112,21 @@ No confirmation needed (read-only).
 Opens a long or short position on GMX V2 (market order). Uses a multicall: sendWnt (execution fee) + sendTokens (collateral) + createOrder (MarketIncrease).
 
 ```
+# Long position: include --long flag
 gmx-v2 --chain arbitrum open-position \
   --market "ETH/USD" \
   --collateral-token 0xaf88d065e77c8cC2239327C5EDb3A432268e5831 \
   --collateral-amount 1000000000 \
   --size-usd 5000.0 \
-  --long true \
+  --long \
+  --slippage-bps 100
+
+# Short position: omit --long flag
+gmx-v2 --chain arbitrum open-position \
+  --market "ETH/USD" \
+  --collateral-token 0xaf88d065e77c8cC2239327C5EDb3A432268e5831 \
+  --collateral-amount 1000000000 \
+  --size-usd 5000.0 \
   --slippage-bps 100
 ```
 
@@ -118,7 +135,7 @@ gmx-v2 --chain arbitrum open-position \
 - `--collateral-token`: ERC-20 token used as collateral (address)
 - `--collateral-amount`: Collateral in smallest units (USDC = 6 decimals, ETH = 18)
 - `--size-usd`: Total position size in USD (collateral × leverage)
-- `--long`: `true` for long, `false` for short
+- `--long`: presence flag — include for long, omit for short
 - `--slippage-bps`: Acceptable slippage in basis points (default: 100 = 1%)
 - `--from`: Wallet address (optional, auto-detected)
 
@@ -136,12 +153,20 @@ gmx-v2 --chain arbitrum open-position \
 Closes a position (fully or partially) using a market decrease order. Only sends execution fee — no collateral transfer needed.
 
 ```
+# Close a long position: include --long
 gmx-v2 --chain arbitrum close-position \
   --market-token 0xMarketTokenAddress \
   --collateral-token 0xCollateralTokenAddress \
   --size-usd 5000.0 \
   --collateral-amount 1000000000 \
-  --long true
+  --long
+
+# Close a short position: omit --long
+gmx-v2 --chain arbitrum close-position \
+  --market-token 0xMarketTokenAddress \
+  --collateral-token 0xCollateralTokenAddress \
+  --size-usd 5000.0 \
+  --collateral-amount 1000000000
 ```
 
 **Parameters:**
@@ -149,7 +174,7 @@ gmx-v2 --chain arbitrum close-position \
 - `--collateral-token`: Collateral token of the position
 - `--size-usd`: Size to close in USD (use full position size for full close)
 - `--collateral-amount`: Collateral to withdraw
-- `--long`: Direction of the position being closed
+- `--long`: presence flag — include for long positions, omit for short
 
 **Flow:**
 1. Run `--dry-run` to preview
@@ -164,7 +189,7 @@ gmx-v2 --chain arbitrum close-position \
 Places a conditional order that executes when the trigger price is reached.
 
 ```
-# Stop-loss at $1700 for ETH long position
+# Stop-loss at $1700 for ETH long position (include --long for long positions)
 gmx-v2 --chain arbitrum place-order \
   --order-type stop-loss \
   --market-token 0xMarketToken \
@@ -173,14 +198,20 @@ gmx-v2 --chain arbitrum place-order \
   --collateral-amount 1000000000 \
   --trigger-price-usd 1700.0 \
   --acceptable-price-usd 1690.0 \
-  --long true
+  --long
 
-# Take-profit at $2200
+# Take-profit at $2200 for long position
 gmx-v2 --chain arbitrum place-order \
   --order-type limit-decrease \
   --trigger-price-usd 2200.0 \
   --acceptable-price-usd 2190.0 \
-  --long true ...
+  --long ...
+
+# Stop-loss for short position (omit --long)
+gmx-v2 --chain arbitrum place-order \
+  --order-type stop-loss \
+  --trigger-price-usd 2500.0 \
+  --acceptable-price-usd 2510.0 ...
 ```
 
 **Order types:** `limit-increase`, `limit-decrease`, `stop-loss`, `stop-increase`
@@ -300,13 +331,13 @@ gmx-v2 --chain arbitrum get-prices --symbol ETH
 # 2. List ETH/USD market info
 gmx-v2 --chain arbitrum list-markets
 
-# 3. Preview the position (dry run)
+# 3. Preview the position (dry run) — use --long flag for long, omit for short
 gmx-v2 --chain arbitrum --dry-run open-position \
   --market "ETH/USD" \
   --collateral-token 0xaf88d065e77c8cC2239327C5EDb3A432268e5831 \
   --collateral-amount 1000000000 \
   --size-usd 5000.0 \
-  --long true
+  --long
 
 # 4. Ask user to confirm, then execute (remove --dry-run)
 gmx-v2 --chain arbitrum open-position \
@@ -314,7 +345,7 @@ gmx-v2 --chain arbitrum open-position \
   --collateral-token 0xaf88d065e77c8cC2239327C5EDb3A432268e5831 \
   --collateral-amount 1000000000 \
   --size-usd 5000.0 \
-  --long true \
+  --long \
   --from 0xYourWallet
 
 # 5. Check position was created (wait ~30s for keeper)

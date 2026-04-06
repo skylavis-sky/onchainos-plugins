@@ -60,10 +60,10 @@ pub fn encode_exchange(i: i64, j: i64, amount_in: u128, min_out: u128) -> String
 }
 
 /// Build the ABI calldata for Curve pool exchange(uint256,uint256,uint256,uint256)
-/// Selector: keccak256("exchange(uint256,uint256,uint256,uint256)") = 0x40d12098
+/// Selector: keccak256("exchange(uint256,uint256,uint256,uint256)") = 0x5b41b908
 /// Used for factory v2 / CryptoSwap pools that use uint256 indices
 pub fn encode_exchange_uint256(i: u64, j: u64, amount_in: u128, min_out: u128) -> String {
-    let mut encoded = String::from("0x40d12098");
+    let mut encoded = String::from("0x5b41b908");
     encoded.push_str(&encode_uint256_u64(i));
     encoded.push_str(&encode_uint256_u64(j));
     encoded.push_str(&encode_uint256_u128(amount_in));
@@ -72,10 +72,10 @@ pub fn encode_exchange_uint256(i: u64, j: u64, amount_in: u128, min_out: u128) -
 }
 
 /// Build the ABI calldata for Curve pool get_dy(uint256,uint256,uint256) -> uint256
-/// Selector: keccak256("get_dy(uint256,uint256,uint256)") = 0xccb48b3c
+/// Selector: keccak256("get_dy(uint256,uint256,uint256)") = 0x556d6e9f
 /// Used for factory v2 / CryptoSwap pools
 pub fn encode_get_dy_uint256(i: u64, j: u64, amount: u128) -> String {
-    let mut encoded = String::from("0xccb48b3c");
+    let mut encoded = String::from("0x556d6e9f");
     encoded.push_str(&encode_uint256_u64(i));
     encoded.push_str(&encode_uint256_u64(j));
     encoded.push_str(&encode_uint256_u128(amount));
@@ -127,9 +127,9 @@ pub fn encode_remove_liquidity_2(lp_amount: u128, min_amounts: [u128; 2]) -> Str
 }
 
 /// Build calldata for remove_liquidity(uint256,uint256[3]) — 3-coin
-/// Selector: 0x1a4d01d2
+/// Selector: keccak256("remove_liquidity(uint256,uint256[3])") = 0xecb586a5
 pub fn encode_remove_liquidity_3(lp_amount: u128, min_amounts: [u128; 3]) -> String {
-    let mut s = String::from("0x1a4d01d2");
+    let mut s = String::from("0xecb586a5");
     s.push_str(&encode_uint256_u128(lp_amount));
     for &a in &min_amounts {
         s.push_str(&encode_uint256_u128(a));
@@ -138,9 +138,9 @@ pub fn encode_remove_liquidity_3(lp_amount: u128, min_amounts: [u128; 3]) -> Str
 }
 
 /// Build calldata for remove_liquidity_one_coin(uint256,int128,uint256)
-/// Selector: 0x517a55a3
+/// Selector: keccak256("remove_liquidity_one_coin(uint256,int128,uint256)") = 0x1a4d01d2
 pub fn encode_remove_liquidity_one_coin(lp_amount: u128, coin_index: i64, min_amount: u128) -> String {
-    let mut s = String::from("0x517a55a3");
+    let mut s = String::from("0x1a4d01d2");
     s.push_str(&encode_uint256_u128(lp_amount));
     // int128 encoded as 32-byte two's complement
     if coin_index >= 0 {

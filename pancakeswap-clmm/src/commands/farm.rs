@@ -30,8 +30,10 @@ pub async fn run(
     }
 
     // Resolve wallet address (must not be zero) — only needed for non-dry-run
-    let wallet = from
-        .unwrap_or_else(|| onchainos::resolve_wallet(chain_id).unwrap_or_default());
+    let wallet = match from {
+        Some(addr) => addr,
+        None => onchainos::resolve_wallet(chain_id).await.unwrap_or_default(),
+    };
     if wallet.is_empty() {
         anyhow::bail!("Cannot resolve wallet address. Pass --from or ensure onchainos is logged in.");
     }
@@ -67,7 +69,7 @@ pub async fn run(
     )
     .await?;
 
-    let tx_hash = onchainos::extract_tx_hash(&result);
+    let tx_hash = onchainos::extract_tx_hash_or_err(&result)?;
 
     println!(
         "{}",

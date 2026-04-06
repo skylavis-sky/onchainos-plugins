@@ -10,8 +10,10 @@ pub async fn run(
     let rpc = config::get_rpc_url(chain_id, rpc_url.as_deref())?;
 
     // Resolve wallet address
-    let wallet = owner
-        .unwrap_or_else(|| onchainos::resolve_wallet(chain_id).unwrap_or_default());
+    let wallet = match owner {
+        Some(addr) => addr,
+        None => onchainos::resolve_wallet(chain_id).await.unwrap_or_default(),
+    };
     if wallet.is_empty() {
         anyhow::bail!("Cannot resolve wallet address. Pass --owner or ensure onchainos is logged in.");
     }

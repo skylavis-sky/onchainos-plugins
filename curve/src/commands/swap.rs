@@ -78,7 +78,7 @@ pub async fn run(
 
     // Build exchange calldata
     // Selector: 0x3df02124 = exchange(int128,int128,uint256,uint256) for StableSwap pools
-    // Selector: 0x40d12098 = exchange(uint256,uint256,uint256,uint256) for CryptoSwap/factory-v2 pools
+    // Selector: 0x5b41b908 = exchange(uint256,uint256,uint256,uint256) for CryptoSwap/factory-v2 pools
     let calldata = if use_uint256 {
         curve_abi::encode_exchange_uint256(in_idx as u64, out_idx as u64, amount_in, min_expected)
     } else {
@@ -120,7 +120,7 @@ pub async fn run(
                 false,
             )
             .await?;
-            let approve_hash = onchainos::extract_tx_hash(&approve_result);
+            let approve_hash = onchainos::extract_tx_hash_or_err(&approve_result)?;
             eprintln!("Approve tx: {}", approve_hash);
             sleep(Duration::from_secs(3)).await;
         }
@@ -139,8 +139,8 @@ pub async fn run(
     )
     .await?;
 
-    let tx_hash = onchainos::extract_tx_hash(&result);
-    let explorer = config::explorer_url(chain_id, tx_hash);
+    let tx_hash = onchainos::extract_tx_hash_or_err(&result)?;
+    let explorer = config::explorer_url(chain_id, &tx_hash);
 
     println!(
         "{}",

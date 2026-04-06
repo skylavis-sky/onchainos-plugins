@@ -80,7 +80,7 @@ pub async fn run(args: AddLiquidityArgs) -> Result<()> {
         println!("  [dry-run] onchainos wallet contract-call --chain {} --to {} --input-data {}", args.chain, token0, approve0_calldata);
     } else {
         let r = crate::onchainos::wallet_contract_call(args.chain, token0, &approve0_calldata, None, None, false).await?;
-        println!("  Approve tx: {}", crate::onchainos::extract_tx_hash(&r));
+        println!("  Approve tx: {}", crate::onchainos::extract_tx_hash_or_err(&r)?);
         // Wait for nonce to settle before next sequential transaction
         tokio::time::sleep(std::time::Duration::from_secs(5)).await;
     }
@@ -93,7 +93,7 @@ pub async fn run(args: AddLiquidityArgs) -> Result<()> {
         println!("  [dry-run] onchainos wallet contract-call --chain {} --to {} --input-data {}", args.chain, token1, approve1_calldata);
     } else {
         let r = crate::onchainos::wallet_contract_call(args.chain, token1, &approve1_calldata, None, None, false).await?;
-        println!("  Approve tx: {}", crate::onchainos::extract_tx_hash(&r));
+        println!("  Approve tx: {}", crate::onchainos::extract_tx_hash_or_err(&r)?);
         // Wait for nonce to settle before mint
         tokio::time::sleep(std::time::Duration::from_secs(5)).await;
     }
@@ -122,7 +122,7 @@ pub async fn run(args: AddLiquidityArgs) -> Result<()> {
     }
 
     let r = crate::onchainos::wallet_contract_call(args.chain, cfg.npm, &mint_calldata, None, None, false).await?;
-    let tx_hash = crate::onchainos::extract_tx_hash(&r);
+    let tx_hash = crate::onchainos::extract_tx_hash_or_err(&r)?;
     println!("  Mint tx: {}", tx_hash);
     println!("\nLP position minted successfully!");
 

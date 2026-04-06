@@ -1,0 +1,28 @@
+schema_version: 1
+name: quickswap-dex
+version: "0.1.0"
+description: "Swap tokens and manage liquidity on QuickSwap DEX on Polygon"
+author:
+  name: "skylavis-sky"
+  github: "skylavis-sky"
+license: MIT
+category: defi-protocol
+type: "community"
+tags:
+  - quickswap
+  - dex
+  - polygon
+  - amm
+  - swap
+  - liquidity
+
+components:
+  skill:
+    dir: skills/quickswap-dex
+
+source_repo: skylavis-sky/onchainos-plugins
+source_dir: quickswap-dex
+source_commit: "ce96474fb530fd1e9659db66315aaa6a70968cb5"
+
+api_calls:
+  - "https://polygon-rpc.com (Polygon RPC)"

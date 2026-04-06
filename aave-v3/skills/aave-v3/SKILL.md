@@ -1,6 +1,6 @@
 ---
 name: aave-v3
-description: "Aave V3 lending and borrowing. Trigger phrases: supply to aave, deposit to aave, borrow from aave, repay aave loan, aave health factor, my aave positions, aave interest rates, enable emode, disable collateral, claim aave rewards. Chinese: 在Aave存款, Aave借款, 还款, 健康因子, 我的Aave仓位, Aave利率"
+description: "Aave V3 lending and borrowing. Trigger phrases: supply to aave, deposit to aave, borrow from aave, repay aave loan, aave health factor, my aave positions, aave interest rates, enable emode, disable collateral, claim aave rewards."
 license: MIT
 metadata:
   author: skylavis-sky
@@ -58,7 +58,8 @@ Please connect your wallet first: run `onchainos wallet login`
 | Check health factor | `aave-v3 health-factor` |
 | View positions | `aave-v3 positions` |
 | List reserve rates / APYs | `aave-v3 reserves` |
-| Enable/disable collateral | `aave-v3 set-collateral --asset <ADDRESS> --enable <true/false>` |
+| Enable collateral | `aave-v3 set-collateral --asset <ADDRESS> --enable` |
+| Disable collateral | `aave-v3 set-collateral --asset <ADDRESS>` (omit --enable) |
 | Set E-Mode | `aave-v3 set-emode --category <ID>` |
 | Claim rewards | `aave-v3 claim-rewards` |
 
@@ -321,10 +322,14 @@ aave-v3 --chain 1 positions --from 0xSomeAddress
 
 **Usage:**
 ```bash
-# Dry-run first
-aave-v3 --chain 1 --dry-run set-collateral --asset 0x514910771AF9Ca656af840dff83E8264EcF986CA --enable false
-# Execute after confirmation
-aave-v3 --chain 1 set-collateral --asset 0x514910771AF9Ca656af840dff83E8264EcF986CA --enable false
+# Enable collateral (dry-run first)
+aave-v3 --chain 1 --dry-run set-collateral --asset 0x514910771AF9Ca656af840dff83E8264EcF986CA --enable
+# Enable collateral (execute after confirmation)
+aave-v3 --chain 1 set-collateral --asset 0x514910771AF9Ca656af840dff83E8264EcF986CA --enable
+
+# Disable collateral (omit --enable flag)
+aave-v3 --chain 1 --dry-run set-collateral --asset 0x514910771AF9Ca656af840dff83E8264EcF986CA
+aave-v3 --chain 1 set-collateral --asset 0x514910771AF9Ca656af840dff83E8264EcF986CA
 ```
 
 ---
@@ -402,6 +407,16 @@ For borrow and repay, you need ERC-20 contract addresses. Common addresses:
 6. **Collateral warning**: Before disabling collateral, simulate health factor impact
 7. **ERC-20 approval**: repay automatically handles approval; inform user if approval tx is included
 8. **Pool address is never hardcoded**: Resolved at runtime from PoolAddressesProvider
+
+---
+
+## Do NOT use for
+
+- Non-Aave protocols (Compound, Morpho, Spark, etc.)
+- DEX swaps or token exchanges (use PancakeSwap, Uniswap, or a swap plugin instead)
+- PancakeSwap or other AMM operations
+- Bridging assets between chains
+- Staking or liquid staking (use Lido or similar plugins)
 
 ---
 

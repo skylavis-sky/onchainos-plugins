@@ -1,11 +1,15 @@
 ---
 name: clanker
-description: "Deploy and manage Clanker ERC-20 tokens on Base and Arbitrum. Trigger phrases: deploy token, launch token on Clanker, create token on Base, search Clanker tokens, list latest tokens, claim LP rewards, claim Clanker fees. Chinese: 部署代币, 在Base上发代币, 创建Clanker代币, 搜索代币, 认领LP奖励"
+description: "Deploy and manage Clanker ERC-20 tokens on Base and Arbitrum. Trigger phrases: deploy token, launch token on Clanker, create token on Base, search Clanker tokens, list latest tokens, claim LP rewards, claim Clanker fees."
 license: MIT
 metadata:
   author: skylavis-sky
   version: "0.1.0"
 ---
+
+## Do NOT use for
+
+Do NOT use for: buying/selling Clanker tokens (use a DEX skill), non-Clanker token deployments
 
 ## Architecture
 

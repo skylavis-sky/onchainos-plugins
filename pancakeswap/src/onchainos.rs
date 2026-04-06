@@ -57,11 +57,18 @@ pub async fn wallet_contract_call(
     Ok(v)
 }
 
-pub fn extract_tx_hash(r: &serde_json::Value) -> &str {
+pub fn extract_tx_hash_or_err(r: &serde_json::Value) -> anyhow::Result<String> {
+    if r["ok"].as_bool() != Some(true) {
+        let err_msg = r["error"].as_str()
+            .or_else(|| r["message"].as_str())
+            .unwrap_or("unknown error");
+        return Err(anyhow::anyhow!("contract-call failed: {}", err_msg));
+    }
     r["data"]["txHash"]
         .as_str()
         .or_else(|| r["txHash"].as_str())
-        .unwrap_or("pending")
+        .map(|s| s.to_string())
+        .ok_or_else(|| anyhow::anyhow!("no txHash in contract-call response"))
 }
 
 /// Fetch the wallet's EVM address for a given chain via `onchainos wallet addresses`.

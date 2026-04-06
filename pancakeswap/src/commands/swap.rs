@@ -102,7 +102,7 @@ pub async fn run(args: SwapArgs) -> Result<()> {
                 None,
                 false,
             ).await?;
-            let approve_tx = crate::onchainos::extract_tx_hash(&approve_result);
+            let approve_tx = crate::onchainos::extract_tx_hash_or_err(&approve_result)?;
             println!("  Approve tx: {}", approve_tx);
             // Wait for approve to be processed before submitting swap
             tokio::time::sleep(tokio::time::Duration::from_secs(3)).await;
@@ -137,7 +137,7 @@ pub async fn run(args: SwapArgs) -> Result<()> {
         false,
     ).await?;
 
-    let tx_hash = crate::onchainos::extract_tx_hash(&swap_result);
+    let tx_hash = crate::onchainos::extract_tx_hash_or_err(&swap_result)?;
     println!("  Swap tx: {}", tx_hash);
     println!("\nSwap submitted successfully!");
     println!("  Swapped {} {} -> ~{:.6} {}", args.amount, symbol_in, amount_out_human, symbol_out);

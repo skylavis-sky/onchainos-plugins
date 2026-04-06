@@ -85,7 +85,7 @@ pub async fn run(
             false,
         )
         .await?;
-        let approve_tx = onchainos::extract_tx_hash(&approve_result);
+        let approve_tx = onchainos::extract_tx_hash_or_err(&approve_result)?;
         eprintln!("Approve txHash: {}", approve_tx);
     }
 
@@ -100,7 +100,7 @@ pub async fn run(
     )
     .await?;
 
-    let tx_hash = onchainos::extract_tx_hash(&result);
+    let tx_hash = onchainos::extract_tx_hash_or_err(&result)?;
     println!(
         "{}",
         json!({

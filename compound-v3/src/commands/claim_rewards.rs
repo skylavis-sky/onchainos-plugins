@@ -82,7 +82,7 @@ pub async fn run(
         false,
     )
     .await?;
-    let claim_tx = onchainos::extract_tx_hash(&claim_result);
+    let claim_tx = onchainos::extract_tx_hash_or_err(&claim_result)?;
 
     let result = serde_json::json!({
         "ok": true,

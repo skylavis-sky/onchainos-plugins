@@ -5,9 +5,9 @@ pub fn rpc_url(chain_id: u64) -> &'static str {
     match chain_id {
         1 => "https://ethereum.publicnode.com",
         56 => "https://bsc-rpc.publicnode.com",
-        137 => "https://polygon-rpc.com",
+        137 => "https://polygon-bor-rpc.publicnode.com",
         8453 => "https://base-rpc.publicnode.com",
-        42161 => "https://arb1.arbitrum.io/rpc",
+        42161 => "https://arbitrum-one-rpc.publicnode.com",
         _ => "https://ethereum.publicnode.com",
     }
 }

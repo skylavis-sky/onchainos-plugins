@@ -1,6 +1,6 @@
 ---
 name: pendle
-description: "Pendle Finance yield tokenization plugin. Buy or sell fixed-yield PT tokens, trade YT yield tokens, provide or remove AMM liquidity, and mint or redeem PT+YT pairs. Trigger phrases: buy PT, sell PT, buy YT, sell YT, Pendle fixed yield, Pendle liquidity, add liquidity Pendle, remove liquidity Pendle, mint PT YT, redeem PT YT, Pendle positions, Pendle markets, Pendle APY. Chinese: 购买PT, 出售PT, 购买YT, 出售YT, Pendle固定收益, Pendle流动性, Pendle持仓, Pendle市场"
+description: "Pendle Finance yield tokenization plugin. Buy or sell fixed-yield PT tokens, trade YT yield tokens, provide or remove AMM liquidity, and mint or redeem PT+YT pairs. Trigger phrases: buy PT, sell PT, buy YT, sell YT, Pendle fixed yield, Pendle liquidity, add liquidity Pendle, remove liquidity Pendle, mint PT YT, redeem PT YT, Pendle positions, Pendle markets, Pendle APY."
 license: MIT
 metadata:
   author: skylavis-sky
@@ -85,11 +85,12 @@ pendle --chain <CHAIN_ID> get-market --market <MARKET_ADDRESS> [--time-frame <1D
 
 **Parameters:**
 - `--market` — market contract address (required)
-- `--time-frame` — historical data window: `1D`, `1W`, or `1M`
+- `--time-frame` — historical data window; accepted values: `1D` or `day`, `1W` or `week`, `1M` or `month`, `1H` or `hour`
 
 **Example:**
 ```bash
 pendle --chain 42161 get-market --market 0xd1D7D99764f8a52Aff0BC88ab0b1B4B9c9A18Ef4 --time-frame 1W
+pendle --chain 42161 get-market --market 0xd1D7D99764f8a52Aff0BC88ab0b1B4B9c9A18Ef4 --time-frame week
 ```
 
 ---
@@ -356,6 +357,15 @@ pendle --chain <CHAIN_ID> redeem-py \
 | LP Token | Pendle AMM liquidity position token |
 | Implied APY | The current fixed yield rate locked in when buying PT |
 | Market expiry | Date after which PT can be redeemed 1:1 without slippage |
+
+## Do NOT use for
+
+- Non-Pendle protocols (Aave, Compound, Morpho, etc.)
+- Simple token swaps not involving PT/YT/LP (use a DEX swap plugin instead)
+- Staking or liquid staking (use Lido or similar plugins)
+- Bridging assets between chains
+
+---
 
 ## Troubleshooting
 

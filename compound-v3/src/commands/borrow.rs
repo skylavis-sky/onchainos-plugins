@@ -78,7 +78,7 @@ pub async fn run(
         false,
     )
     .await?;
-    let borrow_tx = onchainos::extract_tx_hash(&borrow_result);
+    let borrow_tx = onchainos::extract_tx_hash_or_err(&borrow_result)?;
 
     // Read updated borrow balance
     let new_borrow = rpc::get_borrow_balance_of(cfg.comet_proxy, &wallet, cfg.rpc_url)

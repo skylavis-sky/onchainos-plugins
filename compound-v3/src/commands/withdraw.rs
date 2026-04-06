@@ -69,7 +69,7 @@ pub async fn run(
         false,
     )
     .await?;
-    let withdraw_tx = onchainos::extract_tx_hash(&withdraw_result);
+    let withdraw_tx = onchainos::extract_tx_hash_or_err(&withdraw_result)?;
 
     let result = serde_json::json!({
         "ok": true,

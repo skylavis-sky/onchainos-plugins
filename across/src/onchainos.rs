@@ -55,10 +55,16 @@ pub async fn wallet_contract_call(
         .unwrap_or_else(|_| serde_json::json!({"ok": false, "error": stdout.to_string()})))
 }
 
-pub fn extract_tx_hash(result: &Value) -> String {
+pub fn extract_tx_hash_or_err(result: &Value) -> anyhow::Result<String> {
+    if result["ok"].as_bool() != Some(true) {
+        let err_msg = result["error"].as_str()
+            .or_else(|| result["message"].as_str())
+            .unwrap_or("unknown error");
+        return Err(anyhow::anyhow!("contract-call failed: {}", err_msg));
+    }
     result["data"]["txHash"]
         .as_str()
         .or_else(|| result["txHash"].as_str())
-        .unwrap_or("pending")
-        .to_string()
+        .map(|s| s.to_string())
+        .ok_or_else(|| anyhow::anyhow!("no txHash in contract-call response"))
 }

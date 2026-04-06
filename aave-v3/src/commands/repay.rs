@@ -2,6 +2,7 @@ use anyhow::Context;
 use serde_json::{json, Value};
 
 use crate::calldata;
+use crate::commands::supply::infer_decimals;
 use crate::config::get_chain_config;
 use crate::onchainos;
 use crate::rpc;
@@ -66,7 +67,9 @@ pub async fn run(
         }
         (balance, format!("all ({})", balance))
     } else {
-        let decimals = 18u64;
+        let decimals = onchainos::resolve_token(asset, chain_id)
+            .map(|(_, d)| d as u64)
+            .unwrap_or_else(|_| infer_decimals(asset));
         let v = amount.unwrap();
         let minimal = (v * 10u128.pow(decimals as u32) as f64) as u128;
         (minimal, v.to_string())

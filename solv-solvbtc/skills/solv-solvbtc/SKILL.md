@@ -116,10 +116,14 @@ Options:
 
 Example trigger: "Unwrap 0.05 xSolvBTC back to SolvBTC"
 
+## Do NOT use for
+
+Do NOT use for: direct BTC transactions, non-SolvBTC wrapped BTC, Ethereum staking, non-Bitcoin yield protocols
+
 ## Key Facts
 
 - SolvBTC is 1:1 BTC-backed; minting is instant, redemption to WBTC is queued (non-instant)
-- xSolvBTC NAV is always >= 1.0 SolvBTC and grows over time via yield strategies
+- xSolvBTC NAV accrues over time via yield strategies; however, market price of xSolvBTC may trade below NAV on secondary markets — always verify the on-chain NAV via `get-nav` before trading
 - xSolvBTC withdraw fee: 0.05% (5/10000)
 - Arbitrum (42161): mint and redeem SolvBTC
 - Ethereum (1): mint/redeem SolvBTC + wrap/unwrap xSolvBTC

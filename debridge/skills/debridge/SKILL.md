@@ -7,6 +7,10 @@ metadata:
   version: "0.1.0"
 ---
 
+## Do NOT use for
+
+Do NOT use for: same-chain swaps, non-bridge operations, Across Protocol bridges (use across skill)
+
 ## Architecture
 
 - Read ops (get-quote, get-status, get-chains) -> direct HTTP calls to deBridge DLN REST API; no wallet interaction

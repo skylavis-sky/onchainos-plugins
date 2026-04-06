@@ -18,6 +18,14 @@ pub struct ClaimFundingFeesArgs {
     /// Wallet address (defaults to logged-in wallet)
     #[arg(long)]
     pub from: Option<String>,
+
+    /// Target chain: "arbitrum" or "avalanche" (overrides global --chain)
+    #[arg(long)]
+    pub chain: Option<String>,
+
+    /// Simulate without broadcasting (overrides global --dry-run)
+    #[arg(long)]
+    pub dry_run: bool,
 }
 
 pub async fn run(chain: &str, dry_run: bool, args: ClaimFundingFeesArgs) -> anyhow::Result<()> {
@@ -66,7 +74,7 @@ pub async fn run(chain: &str, dry_run: bool, args: ClaimFundingFeesArgs) -> anyh
         dry_run,
     ).await?;
 
-    let tx_hash = crate::onchainos::extract_tx_hash(&result);
+    let tx_hash = crate::onchainos::extract_tx_hash_or_err(&result)?;
 
     println!(
         "{}",

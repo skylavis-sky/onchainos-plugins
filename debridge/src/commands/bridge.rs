@@ -188,7 +188,7 @@ async fn run_evm_bridge(
                         approve_result["error"].as_str().unwrap_or("unknown error")
                     );
                 }
-                let approve_tx = onchainos::extract_tx_hash(&approve_result);
+                let approve_tx = onchainos::extract_tx_hash_or_err(&approve_result)?;
                 println!("Approve tx: {}", approve_tx);
                 println!("Waiting {}s for approval to confirm...", APPROVE_DELAY_SECS);
                 sleep(Duration::from_secs(APPROVE_DELAY_SECS)).await;
@@ -219,7 +219,7 @@ async fn run_evm_bridge(
         println!("\n=== DRY RUN COMPLETE ===");
         println!("No on-chain transactions were submitted.");
         println!("Order ID: {}", order_id);
-        println!("Simulated txHash: {}", onchainos::extract_tx_hash(&order_result));
+        println!("Simulated txHash: {}", order_result["data"]["txHash"].as_str().unwrap_or("0x0000000000000000000000000000000000000000000000000000000000000000"));
         return Ok(());
     }
 
@@ -231,7 +231,7 @@ async fn run_evm_bridge(
         );
     }
 
-    let tx_hash = onchainos::extract_tx_hash(&order_result);
+    let tx_hash = onchainos::extract_tx_hash_or_err(&order_result)?;
     println!("\nOrder submitted!");
     println!("  txHash:  {}", tx_hash);
     println!("  orderId: {}", order_id);
@@ -287,7 +287,7 @@ async fn run_solana_bridge(
         );
     }
 
-    let tx_hash = onchainos::extract_tx_hash(&solana_result);
+    let tx_hash = onchainos::extract_tx_hash_or_err(&solana_result)?;
     println!("\nOrder submitted!");
     println!("  txHash:  {}", tx_hash);
     println!("  orderId: {}", order_id);
