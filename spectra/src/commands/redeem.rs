@@ -96,7 +96,7 @@ pub async fn run(
         dry_run,
     )
     .await?;
-    let tx_hash = extract_tx_hash_or_err(&tx_result);
+    let tx_hash = extract_tx_hash_or_err(&tx_result)?;
 
     Ok(serde_json::json!({
         "ok": true,

@@ -74,18 +74,19 @@ pub async fn wallet_contract_call(
     Ok(parsed)
 }
 
-/// Extract txHash from onchainos response, or return a descriptive error string.
-pub fn extract_tx_hash_or_err(result: &Value) -> String {
-    if let Some(h) = result["data"]["txHash"].as_str() {
-        return h.to_string();
+/// Extract txHash from onchainos response, propagating errors.
+pub fn extract_tx_hash_or_err(result: &Value) -> anyhow::Result<String> {
+    if result["ok"].as_bool() != Some(true) {
+        let err_msg = result["error"].as_str()
+            .or_else(|| result["message"].as_str())
+            .unwrap_or("unknown error");
+        return Err(anyhow::anyhow!("contract-call failed: {}", err_msg));
     }
-    if let Some(h) = result["txHash"].as_str() {
-        return h.to_string();
-    }
-    if let Some(err) = result["error"].as_str() {
-        return format!("ERROR: {}", err);
-    }
-    "pending".to_string()
+    result["data"]["txHash"]
+        .as_str()
+        .or_else(|| result["txHash"].as_str())
+        .map(|s| s.to_string())
+        .ok_or_else(|| anyhow::anyhow!("no txHash in contract-call response"))
 }
 
 /// Build ERC-20 approve calldata (max uint256) and submit via wallet contract-call.

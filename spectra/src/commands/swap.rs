@@ -150,7 +150,7 @@ pub async fn run(
         dry_run,
     )
     .await?;
-    let approve_hash = extract_tx_hash_or_err(&approve_result);
+    let approve_hash = extract_tx_hash_or_err(&approve_result)?;
 
     // Step 2: Execute via Router
     let swap_result = wallet_contract_call(
@@ -163,7 +163,7 @@ pub async fn run(
         dry_run,
     )
     .await?;
-    let tx_hash = extract_tx_hash_or_err(&swap_result);
+    let tx_hash = extract_tx_hash_or_err(&swap_result)?;
 
     Ok(serde_json::json!({
         "ok": true,

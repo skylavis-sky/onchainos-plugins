@@ -13,6 +13,10 @@ use clap::{Parser, Subcommand};
     about = "Stake SOL into validator LSTs and swap between LSTs via Sanctum Router on Solana"
 )]
 struct Cli {
+    /// Preview operation without broadcasting (can be placed before or after subcommand)
+    #[arg(long, global = true)]
+    dry_run: bool,
+
     #[command(subcommand)]
     command: Commands,
 }
@@ -34,11 +38,12 @@ enum Commands {
 #[tokio::main]
 async fn main() {
     let cli = Cli::parse();
+    let global_dry_run = cli.dry_run;
     let result = match cli.command {
         Commands::ListLsts(args) => commands::list_lsts::run(args).await,
         Commands::GetQuote(args) => commands::get_quote::run(args).await,
-        Commands::SwapLst(args) => commands::swap_lst::run(args).await,
-        Commands::Stake(args) => commands::stake::run(args).await,
+        Commands::SwapLst(mut args) => { args.dry_run = global_dry_run || args.dry_run; commands::swap_lst::run(args).await },
+        Commands::Stake(mut args) => { args.dry_run = global_dry_run || args.dry_run; commands::stake::run(args).await },
         Commands::GetPosition(args) => commands::get_position::run(args).await,
     };
     match result {
