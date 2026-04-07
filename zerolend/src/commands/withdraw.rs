@@ -77,10 +77,7 @@ pub async fn run(
     )
     .context("Pool.withdraw() failed")?;
 
-    let tx_hash = result["data"]["txHash"]
-        .as_str()
-        .or_else(|| result["txHash"].as_str())
-        .unwrap_or("pending");
+    let tx_hash = onchainos::extract_tx_hash_or_err(&result)?;
 
     Ok(json!({
         "ok": true,

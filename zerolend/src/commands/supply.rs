@@ -76,19 +76,12 @@ pub async fn run(
         false,
     )
     .context("ERC-20 approve failed")?;
-    let approve_tx = approve_result["data"]["txHash"]
-        .as_str()
-        .or_else(|| approve_result["txHash"].as_str())
-        .or_else(|| approve_result["hash"].as_str())
-        .unwrap_or("pending")
-        .to_string();
+    let approve_tx = onchainos::extract_tx_hash_or_err(&approve_result)?;
 
     // Wait for approve tx to be mined before submitting supply
-    if approve_tx != "pending" && approve_tx.starts_with("0x") {
-        rpc::wait_for_tx(cfg.rpc_url, &approve_tx)
+    rpc::wait_for_tx(cfg.rpc_url, &approve_tx)
             .await
             .context("Approve tx did not confirm in time")?;
-    }
 
     // Step 2: supply
     let supply_calldata = calldata::encode_supply(&token_addr, amount_minimal, &from_addr)
@@ -101,11 +94,7 @@ pub async fn run(
         false,
     )
     .context("Pool.supply() failed")?;
-    let supply_tx = supply_result["data"]["txHash"]
-        .as_str()
-        .or_else(|| supply_result["txHash"].as_str())
-        .or_else(|| supply_result["hash"].as_str())
-        .unwrap_or("pending");
+    let supply_tx = onchainos::extract_tx_hash_or_err(&supply_result)?;
 
     Ok(json!({
         "ok": true,

@@ -86,14 +86,7 @@ pub async fn run(
     )
     .context("multicall (withdrawCollateral) failed")?;
 
-    let mc_tx = extract_tx_hash_or_err(&mc_result)
-        .unwrap_or_else(|_| {
-            mc_result["data"]["txHash"]
-                .as_str()
-                .or_else(|| mc_result["txHash"].as_str())
-                .unwrap_or("pending")
-                .to_string()
-        });
+    let mc_tx = extract_tx_hash_or_err(&mc_result)?;
 
     Ok(json!({
         "ok": true,

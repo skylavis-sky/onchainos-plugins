@@ -137,11 +137,7 @@ pub async fn run(
     // Step 1: ERC-20 approve CreditManagerV3 (NOT facade)
     let approve_result = erc20_approve(chain_id, token_addr, manager, collateral_raw, Some(&user_addr), false)
         .context("ERC-20 approve failed")?;
-    let approve_tx = approve_result["data"]["txHash"]
-        .as_str()
-        .or_else(|| approve_result["txHash"].as_str())
-        .unwrap_or("pending")
-        .to_string();
+    let approve_tx = extract_tx_hash_or_err(&approve_result)?;
 
     // Wait for approve to confirm before opening account
     if approve_tx.starts_with("0x") && approve_tx != "0x" {
@@ -158,14 +154,7 @@ pub async fn run(
     )
     .context("openCreditAccount failed")?;
 
-    let open_tx = extract_tx_hash_or_err(&open_result)
-        .unwrap_or_else(|_| {
-            open_result["data"]["txHash"]
-                .as_str()
-                .or_else(|| open_result["txHash"].as_str())
-                .unwrap_or("pending")
-                .to_string()
-        });
+    let open_tx = extract_tx_hash_or_err(&open_result)?;
 
     Ok(json!({
         "ok": true,

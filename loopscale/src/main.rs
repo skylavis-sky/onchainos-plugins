@@ -12,6 +12,10 @@ use clap::{Parser, Subcommand};
     about = "Loopscale Solana lending plugin — lend, borrow, repay, and manage positions"
 )]
 struct Cli {
+    /// Preview operation without broadcasting (no on-chain effect)
+    #[arg(long, global = true)]
+    dry_run: bool,
+
     #[command(subcommand)]
     command: Commands,
 }
@@ -132,6 +136,7 @@ enum Commands {
 #[tokio::main]
 async fn main() {
     let cli = Cli::parse();
+    let global_dry_run = cli.dry_run;
 
     let result = match cli.command {
         Commands::GetVaults { token } => {
@@ -141,16 +146,16 @@ async fn main() {
             commands::get_position::run(wallet).await
         }
         Commands::Lend { token, amount, vault, dry_run } => {
-            commands::lend::run(token, amount, vault, dry_run).await
+            commands::lend::run(token, amount, vault, global_dry_run || dry_run).await
         }
         Commands::Withdraw { token, amount, all, vault, dry_run } => {
-            commands::withdraw::run(token, amount, vault, all, dry_run).await
+            commands::withdraw::run(token, amount, vault, all, global_dry_run || dry_run).await
         }
         Commands::Borrow { principal, amount, collateral, collateral_amount, duration, duration_type, dry_run } => {
-            commands::borrow::run(principal, amount, collateral, collateral_amount, duration, duration_type, dry_run).await
+            commands::borrow::run(principal, amount, collateral, collateral_amount, duration, duration_type, global_dry_run || dry_run).await
         }
         Commands::Repay { loan, amount, all, token, dry_run } => {
-            commands::repay::run(loan, amount, all, token, dry_run).await
+            commands::repay::run(loan, amount, all, token, global_dry_run || dry_run).await
         }
     };
 

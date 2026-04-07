@@ -93,14 +93,7 @@ pub async fn run(
     )
     .context("closeCreditAccount failed")?;
 
-    let close_tx = extract_tx_hash_or_err(&close_result)
-        .unwrap_or_else(|_| {
-            close_result["data"]["txHash"]
-                .as_str()
-                .or_else(|| close_result["txHash"].as_str())
-                .unwrap_or("pending")
-                .to_string()
-        });
+    let close_tx = extract_tx_hash_or_err(&close_result)?;
 
     Ok(json!({
         "ok": true,
