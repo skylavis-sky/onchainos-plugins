@@ -1,0 +1,32 @@
+schema_version: 1
+name: spectra
+version: "0.1.0"
+description: "Spectra Finance yield tokenization plugin — deposit/redeem PT+YT, claim accrued yield, swap PT via Curve. Primary chain: Base (8453). Secondary: Arbitrum (42161), Ethereum (1)."
+author:
+  name: GeoGu360
+  github: GeoGu360
+category: defi-protocol
+tags:
+  - yield-tokenization
+  - fixed-yield
+  - pt
+  - yt
+  - interest-rate-derivatives
+license: MIT
+
+components:
+  skill:
+    dir: skills/spectra
+
+build:
+  lang: rust
+  binary_name: spectra
+  source_repo: GeoGu360/onchainos-plugins
+  source_commit: "0000000000000000000000000000000000000000"
+  source_dir: spectra
+
+api_calls:
+  - "https://app.spectra.finance"
+  - "https://base-rpc.publicnode.com"
+  - "https://arb1.arbitrum.io/rpc"
+  - "https://cloudflare-eth.com"

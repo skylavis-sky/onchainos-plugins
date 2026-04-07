@@ -1,0 +1,10 @@
+name: sanctum-validator-lst
+version: 0.1.0
+description: "Stake SOL into validator LSTs and swap between LSTs via Sanctum Router on Solana"
+category: defi-protocol
+chains:
+  - 501
+binary: sanctum-validator-lst
+license: MIT
+metadata:
+  author: skylavis-sky
