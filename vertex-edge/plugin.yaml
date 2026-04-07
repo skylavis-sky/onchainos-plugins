@@ -1,0 +1,15 @@
+name: vertex-edge
+version: "0.1.0"
+description: "Query markets, positions, orderbook, prices and deposit collateral on Vertex Edge perpetual DEX on Arbitrum"
+author: skylavis-sky
+license: MIT
+category: defi-protocol
+chains:
+  - 42161
+entry: vertex-edge
+commands:
+  - get-markets
+  - get-positions
+  - get-orderbook
+  - get-prices
+  - deposit

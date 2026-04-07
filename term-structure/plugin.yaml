@@ -1,0 +1,33 @@
+schema_version: 1
+name: term-structure
+version: "0.1.0"
+description: "Lend and borrow at fixed rates on TermMax (Term Structure) — fixed-rate AMM on Arbitrum, Ethereum, BNB"
+author:
+  name: skylavis-sky
+  github: skylavis-sky
+category: defi-protocol
+tags:
+  - lending
+  - borrowing
+  - defi
+  - fixed-rate
+  - yield
+  - term-structure
+  - termmax
+license: MIT
+
+components:
+  skill:
+    dir: skills/term-structure
+
+build:
+  lang: rust
+  binary_name: term-structure
+  source_repo: skylavis-sky/onchainos-plugins
+  source_commit: "0000000000000000000000000000000000000000"
+  source_dir: term-structure
+
+api_calls:
+  - "https://arbitrum-one-rpc.publicnode.com"
+  - "https://ethereum.publicnode.com"
+  - "https://bsc-rpc.publicnode.com"
