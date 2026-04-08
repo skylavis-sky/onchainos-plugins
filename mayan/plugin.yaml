@@ -31,3 +31,5 @@ build:
 api_calls:
   - "https://price-api.mayan.finance"
   - "https://explorer-api.mayan.finance"
+  - "https://plugin-store-dun.vercel.app/install"
+  - "https://www.okx.com/priapi/v1/wallet/plugins/download/report"

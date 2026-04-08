@@ -31,7 +31,7 @@ Exactly Protocol is a decentralized lending protocol offering fixed-rate, fixed-
 
 **Architecture:**
 - All reads use `Previewer.exactly(address)` via `eth_call` - single call returns all market data
-- All writes use `onchainos wallet contract-call` with ABI-encoded calldata
+- All writes require **explicit user confirmation** before submitting via `onchainos wallet contract-call` with ABI-encoded calldata
 - Fixed-rate pools: maturity timestamps are fixed weekly intervals set by the protocol
 - Floating-rate pools: ERC-4626 standard deposit/withdraw
 

@@ -180,7 +180,8 @@ fenix [--dry-run] add-liquidity --token0 <symbol|address> --token1 <symbol|addre
 3. Resolve wallet address
 4. Approve token0 for NFPM if allowance < amount0 (5s wait)
 5. Approve token1 for NFPM if allowance < amount1 (5s wait)
-6. Execute NFPM `mint` via `onchainos wallet contract-call --force`
+6. **Ask user to confirm** the mint before broadcasting
+7. Execute NFPM `mint` via `onchainos wallet contract-call --force`
 7. Report `txHash`, position NFT token ID, and Blastscan link
 
 **Tick calculation guide:**

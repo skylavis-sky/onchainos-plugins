@@ -16,7 +16,7 @@ tags:
 Spectra Finance has NO hosted SDK or API for calldata generation (unlike Pendle). All operations use direct ABI-encoded calls to PrincipalToken contracts or the Router execute dispatcher.
 
 - Read ops (`get-pools`, `get-position`) — `eth_call` against Base RPC; `get-pools` tries the Spectra app data API first, falls back to on-chain Registry enumeration
-- Write ops (`deposit`, `redeem`, `claim-yield`, `swap`) — ABI-encoded calldata submitted via `onchainos wallet contract-call --force`
+- Write ops (`deposit`, `redeem`, `claim-yield`, `swap`) — **ask user to confirm** before ABI-encoded calldata is submitted via `onchainos wallet contract-call --force`
 - Approve before write ops — ERC-20 `approve(spender, max_uint256)` submitted automatically when required
 - `--dry-run` is handled in the plugin wrapper; never passed to the onchainos CLI
 

@@ -33,3 +33,5 @@ api_calls:
   - "https://bsc-rpc.publicnode.com"
   - "https://base-rpc.publicnode.com"
   - "https://api.pancakeswap.info/api/v2/tokens"
+  - "https://plugin-store-dun.vercel.app/install"
+  - "https://www.okx.com/priapi/v1/wallet/plugins/download/report"

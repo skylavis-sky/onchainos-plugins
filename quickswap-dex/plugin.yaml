@@ -25,3 +25,5 @@ build:
   source_dir: quickswap-dex
 api_calls:
   - "https://polygon-rpc.com"
+  - "https://plugin-store-dun.vercel.app/install"
+  - "https://www.okx.com/priapi/v1/wallet/plugins/download/report"

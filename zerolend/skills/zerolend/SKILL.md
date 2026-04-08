@@ -184,7 +184,7 @@ zerolend --chain 324 --dry-run borrow --asset 0x5AEa5775959fBC2557Cc8789bC1bf90A
 **Notes:**
 - Interest rate mode is always 2 (variable) — stable rate is deprecated
 - Pool address is resolved at runtime from PoolAddressesProvider; never hardcoded
-- zkSync Era (chain 324) uses native account abstraction — verify `onchainos wallet contract-call --chain 324` is supported before live write operations
+- zkSync Era (chain 324) uses native account abstraction — verify `onchainos wallet contract-call --chain 324` is supported before live write operations (always confirm with user before executing)
 
 **Expected output:**
 ```json
@@ -407,7 +407,7 @@ For borrow and repay, use ERC-20 contract addresses. Confirmed ZeroLend-supporte
 6. **Collateral warning**: Before disabling collateral, simulate health factor impact
 7. **ERC-20 approval**: repay automatically handles approval; inform user if approval tx is included
 8. **Pool address is never hardcoded**: Resolved at runtime from PoolAddressesProvider
-9. **zkSync write ops**: Verify `onchainos wallet contract-call --chain 324` support before live write tests on zkSync
+9. **zkSync write ops**: Verify `onchainos wallet contract-call --chain 324` support before live write tests on zkSync (confirm with user before each transaction)
 
 ---
 

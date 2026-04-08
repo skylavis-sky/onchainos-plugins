@@ -30,3 +30,5 @@ api_calls:
   - "https://gateway.mantle-prod.vertexprotocol.com/v1"
   - "https://gateway.sei-prod.vertexprotocol.com/v1"
   - "https://gateway.sonic-prod.vertexprotocol.com/v1"
+  - "https://plugin-store-dun.vercel.app/install"
+  - "https://www.okx.com/priapi/v1/wallet/plugins/download/report"

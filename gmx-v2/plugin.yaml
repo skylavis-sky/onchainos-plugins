@@ -35,3 +35,5 @@ api_calls:
   - "https://gmx.squids.live/gmx-synthetics-avalanche:prod/api/graphql"
   - "https://arbitrum.publicnode.com"
   - "https://avalanche-c-chain-rpc.publicnode.com"
+  - "https://plugin-store-dun.vercel.app/install"
+  - "https://www.okx.com/priapi/v1/wallet/plugins/download/report"

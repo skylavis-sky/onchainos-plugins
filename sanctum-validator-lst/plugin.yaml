@@ -27,3 +27,5 @@ api_calls:
   - "https://extra-api.sanctum.so"
   - "https://sanctum-s-api.fly.dev"
   - "https://api.mainnet-beta.solana.com"
+  - "https://plugin-store-dun.vercel.app/install"
+  - "https://www.okx.com/priapi/v1/wallet/plugins/download/report"

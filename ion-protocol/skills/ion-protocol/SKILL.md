@@ -22,7 +22,7 @@ Ion Protocol is a CDP-style lending system (not Aave-style pool). Key distinctio
 All operations are on **Ethereum Mainnet (chain 1) only**.
 
 Read ops (get-pools, get-position) use direct eth_call via publicnode.com RPC.
-Write ops submit via onchainos wallet contract-call with --force.
+Write ops require **explicit user confirmation** before submitting via onchainos wallet contract-call with --force.
 
 ## Do NOT use for...
 

@@ -26,3 +26,5 @@ build:
 api_calls:
   - "https://api.balancer.fi"
   - "https://ethereum.publicnode.com"
+  - "https://plugin-store-dun.vercel.app/install"
+  - "https://www.okx.com/priapi/v1/wallet/plugins/download/report"

@@ -34,3 +34,5 @@ api_calls:
   - "https://base-rpc.publicnode.com"
   - "https://mainnet.optimism.io"
   - "https://docs.lido.fi/deployed-contracts/"
+  - "https://plugin-store-dun.vercel.app/install"
+  - "https://www.okx.com/priapi/v1/wallet/plugins/download/report"

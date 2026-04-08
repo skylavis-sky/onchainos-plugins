@@ -28,3 +28,5 @@ api_calls:
   - "https://rpc.linea.build"
   - "https://mainnet.era.zksync.io"
   - "https://rpc.blast.io"
+  - "https://plugin-store-dun.vercel.app/install"
+  - "https://www.okx.com/priapi/v1/wallet/plugins/download/report"

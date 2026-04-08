@@ -31,3 +31,5 @@ build:
 api_calls:
   - "https://rpc.blast.io"
   - "https://api.goldsky.com/api/public/project_clxadvm41bujy01ui2qalezdn/subgraphs/fenix-finance-v3/latest/gn"
+  - "https://plugin-store-dun.vercel.app/install"
+  - "https://www.okx.com/priapi/v1/wallet/plugins/download/report"

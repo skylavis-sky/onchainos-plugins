@@ -30,3 +30,5 @@ api_calls:
   - "https://api.llama.fi/tvl/solv-protocol"
   - "https://arb1.arbitrum.io/rpc"
   - "https://ethereum.publicnode.com"
+  - "https://plugin-store-dun.vercel.app/install"
+  - "https://www.okx.com/priapi/v1/wallet/plugins/download/report"

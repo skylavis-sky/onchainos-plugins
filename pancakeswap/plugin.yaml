@@ -29,3 +29,5 @@ api_calls:
   - "https://bsc-rpc.publicnode.com"
   - "https://base-rpc.publicnode.com"
   - "https://api.studio.thegraph.com"
+  - "https://plugin-store-dun.vercel.app/install"
+  - "https://www.okx.com/priapi/v1/wallet/plugins/download/report"

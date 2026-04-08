@@ -31,3 +31,5 @@ build:
 api_calls:
   - "https://mainnet.optimism.io"
   - "https://ethereum.publicnode.com"
+  - "https://plugin-store-dun.vercel.app/install"
+  - "https://www.okx.com/priapi/v1/wallet/plugins/download/report"

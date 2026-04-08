@@ -20,7 +20,7 @@ Do NOT use for: same-chain transfers, swaps without bridging, non-Across bridges
 
 ## Overview
 
-This plugin enables cross-chain token bridging via Across Protocol. It uses the Across REST API for off-chain quotes and route discovery, and submits on-chain transactions via `onchainos wallet contract-call` to the SpokePool contract on the origin chain.
+This plugin enables cross-chain token bridging via Across Protocol. It uses the Across REST API for off-chain quotes and route discovery, and — **after explicit user confirmation** — submits on-chain transactions via `onchainos wallet contract-call` to the SpokePool contract on the origin chain.
 
 Supported chains:
 - Ethereum (chain ID 1)

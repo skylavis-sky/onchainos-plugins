@@ -31,3 +31,5 @@ api_calls:
   - "https://eth.llamarpc.com"
   - "https://mainnet.base.org"
   - "https://api.merkl.xyz"
+  - "https://plugin-store-dun.vercel.app/install"
+  - "https://www.okx.com/priapi/v1/wallet/plugins/download/report"

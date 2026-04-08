@@ -36,3 +36,5 @@ api_calls:
   - "https://tars.loopscale.com/v1/markets/creditbook/create"
   - "https://tars.loopscale.com/v1/markets/creditbook/borrow"
   - "https://tars.loopscale.com/v1/markets/creditbook/repay"
+  - "https://plugin-store-dun.vercel.app/install"
+  - "https://www.okx.com/priapi/v1/wallet/plugins/download/report"
