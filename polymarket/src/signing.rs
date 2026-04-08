@@ -1,86 +1,7 @@
 /// EIP-712 order signing for Polymarket CTF Exchange.
 ///
-/// Uses k256 for secp256k1 ECDSA and tiny-keccak for keccak256.
+/// Uses `onchainos wallet sign-message --type eip712` — no raw private key needed.
 use anyhow::{Context, Result};
-use k256::ecdsa::{RecoveryId, SigningKey};
-#[allow(unused_imports)]
-use k256::ecdsa::signature::hazmat::PrehashSigner;
-use tiny_keccak::{Hasher, Keccak};
-
-/// Compute keccak256 of input bytes.
-pub fn keccak256(data: &[u8]) -> [u8; 32] {
-    let mut k = Keccak::v256();
-    k.update(data);
-    let mut out = [0u8; 32];
-    k.finalize(&mut out);
-    out
-}
-
-/// ABI-encode a sequence of 32-byte words (left-padded / right-padded as appropriate).
-/// For EIP-712 struct encoding, every element is exactly 32 bytes.
-fn abi_encode_words(words: &[[u8; 32]]) -> Vec<u8> {
-    let mut out = Vec::with_capacity(words.len() * 32);
-    for w in words {
-        out.extend_from_slice(w);
-    }
-    out
-}
-
-fn u256_word(val: u128) -> [u8; 32] {
-    let mut w = [0u8; 32];
-    let bytes = val.to_be_bytes();
-    w[16..32].copy_from_slice(&bytes);
-    w
-}
-
-fn u256_from_bytes(bytes: &[u8]) -> [u8; 32] {
-    let mut w = [0u8; 32];
-    let start = 32usize.saturating_sub(bytes.len());
-    let src_start = bytes.len().saturating_sub(32);
-    w[start..].copy_from_slice(&bytes[src_start..]);
-    w
-}
-
-pub fn address_word(hex_addr: &str) -> Result<[u8; 32]> {
-    let clean = hex_addr.trim_start_matches("0x");
-    let bytes = hex::decode(clean).with_context(|| format!("decoding address {}", hex_addr))?;
-    anyhow::ensure!(bytes.len() == 20, "address must be 20 bytes: {}", hex_addr);
-    let mut w = [0u8; 32];
-    w[12..32].copy_from_slice(&bytes);
-    Ok(w)
-}
-
-fn uint8_word(val: u8) -> [u8; 32] {
-    let mut w = [0u8; 32];
-    w[31] = val;
-    w
-}
-
-/// ORDER_TYPEHASH
-/// keccak256("Order(uint256 salt,address maker,address signer,address taker,uint256 tokenId,uint256 makerAmount,uint256 takerAmount,uint256 expiration,uint256 nonce,uint256 feeRateBps,uint8 side,uint8 signatureType)")
-fn order_typehash() -> [u8; 32] {
-    keccak256(b"Order(uint256 salt,address maker,address signer,address taker,uint256 tokenId,uint256 makerAmount,uint256 takerAmount,uint256 expiration,uint256 nonce,uint256 feeRateBps,uint8 side,uint8 signatureType)")
-}
-
-/// EIP-712 domain separator for CTF Exchange.
-pub fn domain_separator(verifying_contract: &str) -> Result<[u8; 32]> {
-    let domain_typehash = keccak256(
-        b"EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)",
-    );
-    let name_hash = keccak256(b"Polymarket CTF Exchange");
-    let version_hash = keccak256(b"1");
-    let chain_id_word = u256_word(137);
-    let contract_word = address_word(verifying_contract)?;
-
-    let words = [
-        domain_typehash,
-        name_hash,
-        version_hash,
-        chain_id_word,
-        contract_word,
-    ];
-    Ok(keccak256(&abi_encode_words(&words)))
-}
 
 /// Parameters for an EIP-712 order.
 pub struct OrderParams {
@@ -98,118 +19,134 @@ pub struct OrderParams {
     pub signature_type: u8, // 0=EOA
 }
 
-/// Build the EIP-712 struct hash for an Order.
-pub fn order_struct_hash(p: &OrderParams) -> Result<[u8; 32]> {
-    let typehash = order_typehash();
-
-    // token_id is a large uint256 string — parse as decimal
-    let token_id_u256: u128 = p
-        .token_id
-        .parse::<u128>()
-        .unwrap_or(0); // if very large, truncation is handled below
-
-    // For very large token IDs that exceed u128, we need special handling
-    let token_id_word = if p.token_id.len() > 38 {
-        // Parse as big decimal and convert to 32 bytes
-        decimal_str_to_u256_word(&p.token_id)?
-    } else {
-        u256_word(token_id_u256)
-    };
-
-    let words = [
-        typehash,
-        u256_word(p.salt),
-        address_word(&p.maker)?,
-        address_word(&p.signer)?,
-        address_word(&p.taker)?,
-        token_id_word,
-        u256_word(p.maker_amount as u128),
-        u256_word(p.taker_amount as u128),
-        u256_word(p.expiration as u128),
-        u256_word(p.nonce as u128),
-        u256_word(p.fee_rate_bps as u128),
-        uint8_word(p.side),
-        uint8_word(p.signature_type),
-    ];
-    Ok(keccak256(&abi_encode_words(&words)))
-}
-
-/// Parse a decimal string that may exceed u128 into a 32-byte big-endian word.
-fn decimal_str_to_u256_word(s: &str) -> Result<[u8; 32]> {
-    // Compute s mod 2^256 by successive multiply-add
-    let mut result = [0u8; 32]; // big-endian u256
-    for ch in s.chars() {
-        let digit = ch.to_digit(10).context("invalid decimal digit")? as u64;
-        // result = result * 10 + digit
-        let mut carry = digit;
-        for i in (0..32).rev() {
-            let prod = (result[i] as u64) * 10 + carry;
-            result[i] = (prod & 0xff) as u8;
-            carry = prod >> 8;
-        }
-    }
-    Ok(result)
-}
-
-/// Compute the final EIP-712 digest to sign.
-pub fn eip712_digest(domain_sep: &[u8; 32], struct_hash: &[u8; 32]) -> [u8; 32] {
-    let mut data = Vec::with_capacity(66);
-    data.push(0x19);
-    data.push(0x01);
-    data.extend_from_slice(domain_sep);
-    data.extend_from_slice(struct_hash);
-    keccak256(&data)
-}
-
-/// Sign a 32-byte digest with a secp256k1 private key.
-/// Returns 65-byte signature: r(32) || s(32) || v(1) with v ∈ {27, 28}.
-pub fn sign_digest(private_key_hex: &str, digest: &[u8; 32]) -> Result<Vec<u8>> {
-    let key_bytes = hex::decode(private_key_hex.trim_start_matches("0x"))
-        .context("decoding private key hex")?;
-    let signing_key = SigningKey::from_bytes(key_bytes.as_slice().into())
-        .context("creating signing key")?;
-
-    let (sig, recid): (k256::ecdsa::Signature, RecoveryId) = signing_key
-        .sign_prehash_recoverable(digest)
-        .context("signing digest")?;
-
-    let sig_bytes = sig.to_bytes();
-    let mut out = Vec::with_capacity(65);
-    out.extend_from_slice(&sig_bytes);
-    // Ethereum v = 27 + recovery_id
-    out.push(27 + recid.to_byte());
-    Ok(out)
-}
-
-/// High-level: sign an order and return 0x-prefixed hex signature.
-pub fn sign_order(
-    private_key_hex: &str,
-    params: &OrderParams,
+/// Build the EIP-712 JSON payload for an Order and sign it via onchainos.
+/// Returns 0x-prefixed hex signature.
+pub async fn sign_order_eip712(
+    order: &OrderParams,
+    wallet_address: &str,
     neg_risk: bool,
 ) -> Result<String> {
     use crate::config::Contracts;
-    let exchange = Contracts::exchange_for(neg_risk);
-    let dom_sep = domain_separator(exchange)?;
-    let struct_hash = order_struct_hash(params)?;
-    let digest = eip712_digest(&dom_sep, &struct_hash);
-    let sig_bytes = sign_digest(private_key_hex, &digest)?;
-    Ok(format!("0x{}", hex::encode(sig_bytes)))
+    let verifying_contract = Contracts::exchange_for(neg_risk);
+
+    let payload = serde_json::json!({
+        "domain": {
+            "name": "Polymarket CTF Exchange",
+            "version": "1",
+            "chainId": 137,
+            "verifyingContract": verifying_contract
+        },
+        "types": {
+            "Order": [
+                {"name": "salt",          "type": "uint256"},
+                {"name": "maker",         "type": "address"},
+                {"name": "signer",        "type": "address"},
+                {"name": "taker",         "type": "address"},
+                {"name": "tokenId",       "type": "uint256"},
+                {"name": "makerAmount",   "type": "uint256"},
+                {"name": "takerAmount",   "type": "uint256"},
+                {"name": "expiration",    "type": "uint256"},
+                {"name": "nonce",         "type": "uint256"},
+                {"name": "feeRateBps",    "type": "uint256"},
+                {"name": "side",          "type": "uint8"},
+                {"name": "signatureType", "type": "uint8"}
+            ]
+        },
+        "primaryType": "Order",
+        "message": {
+            "salt":          order.salt.to_string(),
+            "maker":         order.maker.clone(),
+            "signer":        order.signer.clone(),
+            "taker":         order.taker.clone(),
+            "tokenId":       order.token_id.clone(),
+            "makerAmount":   order.maker_amount.to_string(),
+            "takerAmount":   order.taker_amount.to_string(),
+            "expiration":    order.expiration.to_string(),
+            "nonce":         order.nonce.to_string(),
+            "feeRateBps":    order.fee_rate_bps.to_string(),
+            "side":          order.side,
+            "signatureType": order.signature_type
+        }
+    });
+
+    let message_json = payload.to_string();
+    sign_eip712_via_onchainos(wallet_address, &message_json).await
 }
 
-/// Derive Ethereum address from private key hex.
-pub fn private_key_to_address(private_key_hex: &str) -> Result<String> {
-    #[allow(unused_imports)]
-    use k256::elliptic_curve::sec1::ToEncodedPoint;
-    let key_bytes = hex::decode(private_key_hex.trim_start_matches("0x"))
-        .context("decoding private key")?;
-    let signing_key = SigningKey::from_bytes(key_bytes.as_slice().into())
-        .context("creating signing key")?;
-    let verifying_key = signing_key.verifying_key();
-    let point = verifying_key.to_encoded_point(false); // uncompressed
-    let pubkey_bytes = &point.as_bytes()[1..]; // skip 0x04 prefix → 64 bytes
-    let hash = keccak256(pubkey_bytes);
-    let addr_bytes = &hash[12..]; // last 20 bytes
-    Ok(format!("0x{}", hex::encode(addr_bytes)))
+/// Call `onchainos wallet sign-message --type eip712 --chain 137 --from <addr> --message <json> --force`
+/// Returns the 0x-prefixed signature string.
+pub async fn sign_eip712_via_onchainos(wallet_address: &str, message_json: &str) -> Result<String> {
+    let output = tokio::process::Command::new("onchainos")
+        .args([
+            "wallet",
+            "sign-message",
+            "--type",
+            "eip712",
+            "--chain",
+            "137",
+            "--from",
+            wallet_address,
+            "--message",
+            message_json,
+            "--force",
+        ])
+        .output()
+        .await
+        .context("spawning onchainos wallet sign-message")?;
+
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    let v: serde_json::Value = serde_json::from_str(&stdout)
+        .with_context(|| format!("parsing sign-message response: {}", stdout))?;
+
+    if v["ok"].as_bool() != Some(true) {
+        let msg = v["error"]
+            .as_str()
+            .or_else(|| v["message"].as_str())
+            .unwrap_or("unknown error");
+        return Err(anyhow::anyhow!("sign-message failed: {}", msg));
+    }
+
+    v["data"]["signature"]
+        .as_str()
+        .map(|s| s.to_string())
+        .ok_or_else(|| anyhow::anyhow!("no signature in sign-message response: {}", stdout))
+}
+
+/// Build the ClobAuth EIP-712 payload and sign it via onchainos.
+/// Returns (address, signature_hex, timestamp, nonce).
+pub async fn sign_clob_auth_eip712(
+    wallet_address: &str,
+    nonce: u64,
+) -> Result<(String, String, u64, u64)> {
+    let timestamp = chrono::Utc::now().timestamp() as u64;
+    let message_text = "This message attests that I control the given wallet";
+
+    let payload = serde_json::json!({
+        "domain": {
+            "name": "ClobAuthDomain",
+            "version": "1",
+            "chainId": 137
+        },
+        "types": {
+            "ClobAuth": [
+                {"name": "address",   "type": "address"},
+                {"name": "timestamp", "type": "string"},
+                {"name": "nonce",     "type": "uint256"},
+                {"name": "message",   "type": "string"}
+            ]
+        },
+        "primaryType": "ClobAuth",
+        "message": {
+            "address":   wallet_address,
+            "timestamp": timestamp.to_string(),
+            "nonce":     nonce,
+            "message":   message_text
+        }
+    });
+
+    let message_json = payload.to_string();
+    let sig = sign_eip712_via_onchainos(wallet_address, &message_json).await?;
+    Ok((wallet_address.to_string(), sig, timestamp, nonce))
 }
 
 #[cfg(test)]
@@ -217,15 +154,22 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_decimal_str_to_u256_word_small() {
-        let w = decimal_str_to_u256_word("255").unwrap();
-        assert_eq!(w[31], 0xff);
-    }
-
-    #[test]
-    fn test_address_word() {
-        let w = address_word("0x4bFb41d5B3570DeFd03C39a9A4D8dE6Bd8B8982E").unwrap();
-        assert_eq!(&w[..12], &[0u8; 12]);
-        assert_eq!(w[12], 0x4b);
+    fn test_order_params_salt_string() {
+        let p = OrderParams {
+            salt: 255,
+            maker: "0x0000000000000000000000000000000000000001".to_string(),
+            signer: "0x0000000000000000000000000000000000000001".to_string(),
+            taker: "0x0000000000000000000000000000000000000000".to_string(),
+            token_id: "12345".to_string(),
+            maker_amount: 1_000_000,
+            taker_amount: 1_000_000,
+            expiration: 0,
+            nonce: 0,
+            fee_rate_bps: 0,
+            side: 0,
+            signature_type: 0,
+        };
+        // Verify salt serialises correctly
+        assert_eq!(p.salt.to_string(), "255");
     }
 }

@@ -7,7 +7,7 @@ use crate::api::{
 };
 use crate::auth::ensure_credentials;
 use crate::onchainos::{approve_ctf, get_wallet_address};
-use crate::signing::{sign_order, OrderParams};
+use crate::signing::{sign_order_eip712, OrderParams};
 
 use super::buy::resolve_market_token;
 
@@ -44,13 +44,10 @@ pub async fn run(
         return Ok(());
     }
 
-    let private_key = std::env::var("POLYMARKET_PRIVATE_KEY")
-        .context("POLYMARKET_PRIVATE_KEY environment variable not set")?;
-
     let client = Client::new();
 
     let wallet_addr = get_wallet_address().await?;
-    let (_, creds) = ensure_credentials(&client, &private_key).await?;
+    let creds = ensure_credentials(&client, &wallet_addr).await?;
 
     let (condition_id, token_id, neg_risk) = resolve_market_token(&client, market_id, outcome).await?;
 
@@ -122,7 +119,7 @@ pub async fn run(
         signature_type: 0,
     };
 
-    let signature = sign_order(&private_key, &params, neg_risk)?;
+    let signature = sign_order_eip712(&params, &wallet_addr, neg_risk).await?;
 
     let order_body = OrderBody {
         salt: salt.to_string(),
