@@ -1,5 +1,5 @@
 ---
-name: archimedes
+name: archimedes-v1
 description: "Archimedes Finance leveraged yield protocol on Ethereum. Trigger phrases: open archimedes position, open leveraged position, archimedes yield, deposit to archimedes, close archimedes position, my archimedes positions, archimedes protocol info, archimedes available leverage, archimedes NFT positions, leveraged OUSD yield"
 version: "0.1.0"
 author: "skylavis-sky"
