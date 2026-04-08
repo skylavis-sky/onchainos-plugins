@@ -7,22 +7,17 @@ use crate::api::{
     OrderBody, OrderRequest,
 };
 use crate::auth::ensure_credentials;
-use crate::onchainos::{approve_usdc_max, get_wallet_address};
+use crate::config::{get_or_create_signing_key, signing_key_address};
+use crate::onchainos::{approve_usdc_max, ensure_operator_approval, get_wallet_address};
 use crate::signing::{sign_order, OrderParams};
 
 /// Run the buy command.
-///
-/// market_id: condition_id (0x-prefixed) or slug
-/// outcome: "yes" or "no"
-/// amount: USDC.e amount to spend (human-readable, e.g. "100" = $100)
-/// price: limit price in [0, 1], or None for market order (FOK)
-/// approve: whether to approve USDC.e before placing (default: auto-detect)
 pub async fn run(
     market_id: &str,
     outcome: &str,
     amount: &str,
     price: Option<f64>,
-    order_type: &str,  // "GTC" or "FOK"
+    order_type: &str,
     auto_approve: bool,
     dry_run: bool,
 ) -> Result<()> {
@@ -36,7 +31,6 @@ pub async fn run(
                     "market_id": market_id,
                     "outcome": outcome,
                     "amount": amount,
-                    "estimated_price": null,
                     "note": "dry-run: order not submitted"
                 }
             })
@@ -44,19 +38,24 @@ pub async fn run(
         return Ok(());
     }
 
-    let private_key = std::env::var("POLYMARKET_PRIVATE_KEY")
-        .context("POLYMARKET_PRIVATE_KEY environment variable not set")?;
-
     let client = Client::new();
 
-    // Resolve wallet address
+    // Load/generate local signing key and derive its address
+    let signing_key = get_or_create_signing_key()?;
+    let signer_addr = signing_key_address(&signing_key);
+
+    // Resolve onchainos wallet (holds USDC.e)
     let wallet_addr = get_wallet_address().await?;
 
-    // Get/derive credentials
-    let (_, creds) = ensure_credentials(&client, &private_key).await?;
+    // Ensure local signing key is approved as operator for the onchainos wallet
+    ensure_operator_approval(&wallet_addr, &signer_addr, false).await?;
+
+    // Get/derive credentials via local signing key (no onchainos EIP-712)
+    let creds = ensure_credentials(&client, &signing_key).await?;
 
     // Resolve market
-    let (condition_id, token_id, neg_risk) = resolve_market_token(&client, market_id, outcome).await?;
+    let (condition_id, token_id, neg_risk) =
+        resolve_market_token(&client, market_id, outcome).await?;
 
     // Get tick size
     let tick_size = get_tick_size(&client, &token_id).await?;
@@ -74,15 +73,20 @@ pub async fn run(
         }
         round_price(p, tick_size)
     } else {
-        // Market order: walk the asks to find worst price
         let book = get_orderbook(&client, &token_id).await?;
         compute_buy_worst_price(&book.asks, usdc_amount)
             .ok_or_else(|| anyhow::anyhow!("No asks available in the order book"))?
     };
 
     // Check USDC allowance and auto-approve if needed
-    let allowance_info = get_balance_allowance(&client, &wallet_addr, &creds, "COLLATERAL", None).await?;
-    let allowance_raw = allowance_info.allowance.as_deref().unwrap_or("0").parse::<u64>().unwrap_or(0);
+    let allowance_info =
+        get_balance_allowance(&client, &signer_addr, &creds, "COLLATERAL", None).await?;
+    let allowance_raw = allowance_info
+        .allowance
+        .as_deref()
+        .unwrap_or("0")
+        .parse::<u64>()
+        .unwrap_or(0);
     let usdc_needed_raw = to_token_units(usdc_amount);
 
     if allowance_raw < usdc_needed_raw || auto_approve {
@@ -94,18 +98,16 @@ pub async fn run(
     // Build order amounts
     let rounded_usdc = round_amount_down(usdc_amount, tick_size);
     let maker_amount_raw = to_token_units(rounded_usdc);
-    // taker_amount = usdc / price (shares to receive)
     let shares = rounded_usdc / limit_price;
     let rounded_shares = round_size_down(shares);
     let taker_amount_raw = to_token_units(rounded_shares);
 
-    // Generate salt
     let salt = rand_salt();
 
     let params = OrderParams {
         salt,
-        maker: wallet_addr.clone(),
-        signer: wallet_addr.clone(),
+        maker: wallet_addr.clone(), // onchainos wallet holds USDC.e
+        signer: signer_addr.clone(), // local key signs the order
         taker: "0x0000000000000000000000000000000000000000".to_string(),
         token_id: token_id.clone(),
         maker_amount: maker_amount_raw,
@@ -117,12 +119,12 @@ pub async fn run(
         signature_type: 0, // EOA
     };
 
-    let signature = sign_order(&private_key, &params, neg_risk)?;
+    let signature = sign_order(&signing_key, &params, neg_risk)?;
 
     let order_body = OrderBody {
         salt: salt.to_string(),
         maker: wallet_addr.clone(),
-        signer: wallet_addr.clone(),
+        signer: signer_addr.clone(),
         taker: "0x0000000000000000000000000000000000000000".to_string(),
         token_id: token_id.clone(),
         maker_amount: maker_amount_raw.to_string(),
@@ -142,7 +144,7 @@ pub async fn run(
         post_only: false,
     };
 
-    let resp = post_order(&client, &wallet_addr, &creds, &order_req).await?;
+    let resp = post_order(&client, &signer_addr, &creds, &order_req).await?;
 
     if resp.success != Some(true) {
         let msg = resp.error_msg.as_deref().unwrap_or("unknown error");
@@ -162,8 +164,6 @@ pub async fn run(
             "limit_price": limit_price,
             "usdc_amount": rounded_usdc,
             "shares": rounded_shares,
-            "maker_amount_raw": maker_amount_raw,
-            "taker_amount_raw": taker_amount_raw,
             "tx_hashes": resp.tx_hashes,
         }
     });
@@ -178,7 +178,6 @@ pub async fn resolve_market_token(
     outcome: &str,
 ) -> Result<(String, String, bool)> {
     if market_id.starts_with("0x") || market_id.starts_with("0X") {
-        // condition_id path
         let market = get_clob_market(client, market_id).await?;
         let is_yes = outcome.to_lowercase() == "yes";
         let token = market
@@ -194,7 +193,6 @@ pub async fn resolve_market_token(
             .ok_or_else(|| anyhow::anyhow!("Could not find {} token in market", outcome))?;
         Ok((market.condition_id.clone(), token.token_id.clone(), market.neg_risk))
     } else {
-        // slug path
         let gamma = crate::api::get_gamma_market_by_slug(client, market_id).await?;
         let condition_id = gamma
             .condition_id
@@ -221,7 +219,6 @@ pub async fn resolve_market_token(
     }
 }
 
-/// Generate a random u128 salt (safe for EIP-712 salt field which is uint256).
 fn rand_salt() -> u128 {
     use std::time::{SystemTime, UNIX_EPOCH};
     let nanos = SystemTime::now()
@@ -232,6 +229,5 @@ fn rand_salt() -> u128 {
         .duration_since(UNIX_EPOCH)
         .unwrap()
         .as_secs() as u128;
-    // Combine secs + nanos for entropy
     secs.wrapping_mul(1_000_000_000).wrapping_add(nanos)
 }

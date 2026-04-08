@@ -45,7 +45,7 @@ enum Commands {
         address: Option<String>,
     },
 
-    /// Buy YES or NO shares in a market (requires POLYMARKET_PRIVATE_KEY)
+    /// Buy YES or NO shares in a market (signs via onchainos wallet)
     Buy {
         /// Market identifier: condition_id (0x-prefixed hex) or slug
         #[arg(long)]
@@ -76,7 +76,7 @@ enum Commands {
         dry_run: bool,
     },
 
-    /// Sell YES or NO shares in a market (requires POLYMARKET_PRIVATE_KEY)
+    /// Sell YES or NO shares in a market (signs via onchainos wallet)
     Sell {
         /// Market identifier: condition_id (0x-prefixed hex) or slug
         #[arg(long)]
@@ -107,7 +107,7 @@ enum Commands {
         dry_run: bool,
     },
 
-    /// Cancel a single open order by order ID (requires POLYMARKET_PRIVATE_KEY)
+    /// Cancel a single open order by order ID (signs via onchainos wallet)
     Cancel {
         /// Order ID (0x-prefixed hash). Omit to cancel all orders.
         #[arg(long)]

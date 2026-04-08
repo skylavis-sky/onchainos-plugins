@@ -6,7 +6,8 @@ use crate::api::{
     round_amount_down, round_price, round_size_down, to_token_units, OrderBody, OrderRequest,
 };
 use crate::auth::ensure_credentials;
-use crate::onchainos::{approve_ctf, get_wallet_address};
+use crate::config::{get_or_create_signing_key, signing_key_address};
+use crate::onchainos::{approve_ctf, ensure_operator_approval, get_wallet_address};
 use crate::signing::{sign_order, OrderParams};
 
 use super::buy::resolve_market_token;
@@ -44,13 +45,13 @@ pub async fn run(
         return Ok(());
     }
 
-    let private_key = std::env::var("POLYMARKET_PRIVATE_KEY")
-        .context("POLYMARKET_PRIVATE_KEY environment variable not set")?;
-
     let client = Client::new();
 
+    let signing_key = get_or_create_signing_key()?;
+    let signer_addr = signing_key_address(&signing_key);
     let wallet_addr = get_wallet_address().await?;
-    let (_, creds) = ensure_credentials(&client, &private_key).await?;
+    ensure_operator_approval(&wallet_addr, &signer_addr, false).await?;
+    let creds = ensure_credentials(&client, &signing_key).await?;
 
     let (condition_id, token_id, neg_risk) = resolve_market_token(&client, market_id, outcome).await?;
 
@@ -74,7 +75,7 @@ pub async fn run(
     };
 
     // Check CTF token balance
-    let token_balance = get_balance_allowance(&client, &wallet_addr, &creds, "CONDITIONAL", Some(&token_id)).await?;
+    let token_balance = get_balance_allowance(&client, &signer_addr, &creds, "CONDITIONAL", Some(&token_id)).await?;
     let balance_raw = token_balance.balance.as_deref().unwrap_or("0").parse::<u64>().unwrap_or(0);
     let shares_needed_raw = to_token_units(share_amount);
 
@@ -110,7 +111,7 @@ pub async fn run(
     let params = OrderParams {
         salt,
         maker: wallet_addr.clone(),
-        signer: wallet_addr.clone(),
+        signer: signer_addr.clone(),
         taker: "0x0000000000000000000000000000000000000000".to_string(),
         token_id: token_id.clone(),
         maker_amount: maker_amount_raw,
@@ -122,12 +123,12 @@ pub async fn run(
         signature_type: 0,
     };
 
-    let signature = sign_order(&private_key, &params, neg_risk)?;
+    let signature = sign_order(&signing_key, &params, neg_risk)?;
 
     let order_body = OrderBody {
         salt: salt.to_string(),
         maker: wallet_addr.clone(),
-        signer: wallet_addr.clone(),
+        signer: signer_addr.clone(),
         taker: "0x0000000000000000000000000000000000000000".to_string(),
         token_id: token_id.clone(),
         maker_amount: maker_amount_raw.to_string(),
@@ -147,7 +148,7 @@ pub async fn run(
         post_only: false,
     };
 
-    let resp = post_order(&client, &wallet_addr, &creds, &order_req).await?;
+    let resp = post_order(&client, &signer_addr, &creds, &order_req).await?;
 
     if resp.success != Some(true) {
         let msg = resp.error_msg.as_deref().unwrap_or("unknown error");
