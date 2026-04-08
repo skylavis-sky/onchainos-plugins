@@ -22,11 +22,14 @@ components:
 build:
   lang: rust
   binary_name: morpho
-  source_repo: skylavis-sky/morpho
-  source_commit: "0000000000000000000000000000000000000000"
+  source_repo: skylavis-sky/onchainos-plugins
+  source_commit: "6882d08d56eb3be8f68700f92def6f0bfc997fe8"
+  source_dir: morpho
 
 api_calls:
   - "https://blue-api.morpho.org/graphql"
   - "https://eth.llamarpc.com"
   - "https://mainnet.base.org"
   - "https://api.merkl.xyz"
+  - "https://plugin-store-dun.vercel.app/install"
+  - "https://www.okx.com/priapi/v1/wallet/plugins/download/report"

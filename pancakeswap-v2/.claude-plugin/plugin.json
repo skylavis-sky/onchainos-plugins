@@ -1,0 +1,10 @@
+{
+  "name": "pancakeswap-v2",
+  "description": "Swap tokens and provide full-range liquidity on PancakeSwap V2 — the xyk AMM on BSC and Base. Trigger phrases: swap on pancakeswap v2, pancake swap, pcs v2 swap, add liquidity pancakeswap, remove liquidity pancake, pancake amm, pancakeswap v2 quote, check pancake pair.",
+  "version": "1.0.0",
+  "author": {"name": "skylavis-sky", "github": "skylavis-sky"},
+  "homepage": "https://github.com/skylavis-sky/onchainos-plugins/tree/main/pancakeswap-v2",
+  "repository": "https://github.com/skylavis-sky/onchainos-plugins",
+  "license": "MIT",
+  "keywords": ["dex", "swap", "liquidity", "amm", "pancakeswap", "bsc", "v2", "xyk", "lp"]
+}

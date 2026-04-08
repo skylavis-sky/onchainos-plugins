@@ -22,7 +22,7 @@ build:
   lang: rust
   binary_name: lido
   source_repo: skylavis-sky/onchainos-plugins
-  source_commit: "0000000000000000000000000000000000000000"
+  source_commit: "6882d08d56eb3be8f68700f92def6f0bfc997fe8"
   source_dir: lido
 
 api_calls:
@@ -34,3 +34,5 @@ api_calls:
   - "https://base-rpc.publicnode.com"
   - "https://mainnet.optimism.io"
   - "https://docs.lido.fi/deployed-contracts/"
+  - "https://plugin-store-dun.vercel.app/install"
+  - "https://www.okx.com/priapi/v1/wallet/plugins/download/report"

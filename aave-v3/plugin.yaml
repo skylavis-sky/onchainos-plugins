@@ -24,7 +24,7 @@ build:
   lang: rust
   binary_name: aave-v3
   source_repo: skylavis-sky/onchainos-plugins
-  source_commit: "5ab6dcaf5ed7455c89307a03cfc8189f4dcb46f9"
+  source_commit: "6882d08d56eb3be8f68700f92def6f0bfc997fe8"
   source_dir: aave-v3
 
 api_calls:
@@ -32,3 +32,5 @@ api_calls:
   - "https://polygon.llamarpc.com"
   - "https://arbitrum.llamarpc.com"
   - "https://base.llamarpc.com"
+  - "https://plugin-store-dun.vercel.app/install"
+  - "https://www.okx.com/priapi/v1/wallet/plugins/download/report"

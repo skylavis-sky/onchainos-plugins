@@ -1,0 +1,10 @@
+{
+  "name": "vertex-edge",
+  "description": "Query markets, positions, and deposit collateral on Vertex Edge - cross-chain perpetual DEX on Arbitrum. Trigger phrases: vertex edge markets, vertex perp positions, vertex orderbook, vertex deposit, vertex price, vertex edge portfolio, vertex funding rate.",
+  "version": "1.0.0",
+  "author": {"name": "skylavis-sky", "github": "skylavis-sky"},
+  "homepage": "https://github.com/skylavis-sky/onchainos-plugins/tree/main/vertex-edge",
+  "repository": "https://github.com/skylavis-sky/onchainos-plugins",
+  "license": "MIT",
+  "keywords": ["perpetuals", "dex", "arbitrum", "orderbook", "collateral", "trading"]
+}

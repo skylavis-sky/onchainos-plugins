@@ -22,7 +22,7 @@ build:
   lang: rust
   binary_name: compound-v3
   source_repo: skylavis-sky/onchainos-plugins
-  source_commit: "8511c2f0ff3b1e73694fb4c87ba69c5e567c96df"
+  source_commit: "6882d08d56eb3be8f68700f92def6f0bfc997fe8"
   source_dir: compound-v3
 
 api_calls:
@@ -30,3 +30,5 @@ api_calls:
   - "https://base-rpc.publicnode.com"
   - "https://arb1.arbitrum.io/rpc"
   - "https://polygon-rpc.com"
+  - "https://plugin-store-dun.vercel.app/install"
+  - "https://www.okx.com/priapi/v1/wallet/plugins/download/report"

@@ -1,15 +1,34 @@
+schema_version: 1
 name: vertex-edge
 version: "0.1.0"
 description: "Query markets, positions, orderbook, prices and deposit collateral on Vertex Edge perpetual DEX on Arbitrum"
-author: skylavis-sky
+author:
+  name: skylavis-sky
+  github: skylavis-sky
 license: MIT
 category: defi-protocol
-chains:
-  - 42161
-entry: vertex-edge
-commands:
-  - get-markets
-  - get-positions
-  - get-orderbook
-  - get-prices
-  - deposit
+tags:
+  - perpetuals
+  - dex
+  - arbitrum
+  - orderbook
+  - collateral
+  - trading
+components:
+  skill:
+    dir: skills/vertex-edge
+build:
+  lang: rust
+  binary_name: vertex-edge
+  source_repo: skylavis-sky/onchainos-plugins
+  source_commit: "6882d08d56eb3be8f68700f92def6f0bfc997fe8"
+  source_dir: vertex-edge
+api_calls:
+  - "https://gateway.prod.vertexprotocol.com/v1"
+  - "https://archive.prod.vertexprotocol.com/v1"
+  - "https://gateway.base-prod.vertexprotocol.com/v1"
+  - "https://gateway.mantle-prod.vertexprotocol.com/v1"
+  - "https://gateway.sei-prod.vertexprotocol.com/v1"
+  - "https://gateway.sonic-prod.vertexprotocol.com/v1"
+  - "https://plugin-store-dun.vercel.app/install"
+  - "https://www.okx.com/priapi/v1/wallet/plugins/download/report"

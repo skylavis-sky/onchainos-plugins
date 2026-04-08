@@ -1,0 +1,113 @@
+/// onchainos CLI wrappers for Polymarket on-chain operations.
+use anyhow::Result;
+use serde_json::Value;
+
+const CHAIN: &str = "137";
+
+/// Call `onchainos wallet contract-call --chain 137 --to <to> --input-data <data> --force`
+pub async fn wallet_contract_call(to: &str, input_data: &str) -> Result<Value> {
+    let output = tokio::process::Command::new("onchainos")
+        .args([
+            "wallet",
+            "contract-call",
+            "--chain",
+            CHAIN,
+            "--to",
+            to,
+            "--input-data",
+            input_data,
+            "--force",
+        ])
+        .output()
+        .await?;
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    serde_json::from_str(&stdout)
+        .map_err(|e| anyhow::anyhow!("wallet contract-call parse error: {}\nraw: {}", e, stdout))
+}
+
+/// Extract txHash from wallet contract-call response.
+pub fn extract_tx_hash(result: &Value) -> anyhow::Result<String> {
+    if result["ok"].as_bool() != Some(true) {
+        let msg = result["error"]
+            .as_str()
+            .or_else(|| result["message"].as_str())
+            .unwrap_or("unknown error");
+        return Err(anyhow::anyhow!("contract-call failed: {}", msg));
+    }
+    result["data"]["txHash"]
+        .as_str()
+        .or_else(|| result["txHash"].as_str())
+        .map(|s| s.to_string())
+        .ok_or_else(|| anyhow::anyhow!("no txHash in contract-call response"))
+}
+
+/// Get the wallet address from `onchainos wallet balance --chain 137`.
+/// Parses: data.details[0].tokenAssets[0].address
+pub async fn get_wallet_address() -> Result<String> {
+    let output = tokio::process::Command::new("onchainos")
+        .args(["wallet", "balance", "--chain", CHAIN])
+        .output()
+        .await?;
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    let v: Value = serde_json::from_str(&stdout)
+        .map_err(|e| anyhow::anyhow!("wallet balance parse error: {}\nraw: {}", e, stdout))?;
+    v["data"]["details"][0]["tokenAssets"][0]["address"]
+        .as_str()
+        .map(|s| s.to_string())
+        .ok_or_else(|| anyhow::anyhow!("Could not determine wallet address from onchainos output"))
+}
+
+/// Pad a hex address to 32 bytes (64 hex chars), no 0x prefix.
+fn pad_address(addr: &str) -> String {
+    let clean = addr.trim_start_matches("0x");
+    format!("{:0>64}", clean)
+}
+
+/// Pad a u256 value to 32 bytes (64 hex chars), no 0x prefix.
+fn pad_u256(val: u128) -> String {
+    format!("{:064x}", val)
+}
+
+/// ABI-encode and submit USDC.e approve(spender, amount).
+/// Selector: 0x095ea7b3
+/// To: USDC.e contract
+pub async fn usdc_approve(usdc_addr: &str, spender: &str, amount: u128) -> Result<String> {
+    let spender_padded = pad_address(spender);
+    let amount_padded = pad_u256(amount);
+    let calldata = format!("0x095ea7b3{}{}", spender_padded, amount_padded);
+    let result = wallet_contract_call(usdc_addr, &calldata).await?;
+    extract_tx_hash(&result)
+}
+
+/// ABI-encode and submit CTF setApprovalForAll(operator, true).
+/// Selector: 0xa22cb465
+/// To: CTF contract
+pub async fn ctf_set_approval_for_all(ctf_addr: &str, operator: &str) -> Result<String> {
+    let operator_padded = pad_address(operator);
+    // approved = true = 1
+    let approved_padded = pad_u256(1);
+    let calldata = format!("0xa22cb465{}{}", operator_padded, approved_padded);
+    let result = wallet_contract_call(ctf_addr, &calldata).await?;
+    extract_tx_hash(&result)
+}
+
+/// Approve max USDC.e to CTF Exchange. Used before BUY orders.
+pub async fn approve_usdc_max(neg_risk: bool) -> Result<String> {
+    use crate::config::Contracts;
+    let usdc = Contracts::USDC_E;
+    let exchange = Contracts::exchange_for(neg_risk);
+    // For true max uint256, we encode manually
+    let spender_padded = pad_address(exchange);
+    let amount_padded = "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff".to_string();
+    let calldata = format!("0x095ea7b3{}{}", spender_padded, amount_padded);
+    let result = wallet_contract_call(usdc, &calldata).await?;
+    extract_tx_hash(&result)
+}
+
+/// Approve CTF tokens for CTF Exchange. Used before SELL orders.
+pub async fn approve_ctf(neg_risk: bool) -> Result<String> {
+    use crate::config::Contracts;
+    let ctf = Contracts::CTF;
+    let exchange = Contracts::exchange_for(neg_risk);
+    ctf_set_approval_for_all(ctf, exchange).await
+}
