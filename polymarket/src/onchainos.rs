@@ -111,3 +111,76 @@ pub async fn approve_ctf(neg_risk: bool) -> Result<String> {
     let exchange = Contracts::exchange_for(neg_risk);
     ctf_set_approval_for_all(ctf, exchange).await
 }
+
+/// ABI-encode and submit CTFExchange.setOperatorApproval(operator, true).
+/// Selector: keccak256("setOperatorApproval(address,bool)")[0:4] = 0xa63a1098
+pub async fn set_operator_approval(exchange_addr: &str, operator: &str) -> Result<String> {
+    // setOperatorApproval(address operator, bool approved)
+    // selector = keccak256("setOperatorApproval(address,bool)")[0:4] = 0xa63a1098
+    let operator_padded = pad_address(operator);
+    let approved_padded = pad_u256(1); // true
+    let calldata = format!("0xa63a1098{}{}", operator_padded, approved_padded);
+    let result = wallet_contract_call(exchange_addr, &calldata).await?;
+    extract_tx_hash(&result)
+}
+
+/// Path for caching operator approval state.
+fn operator_approval_cache_path() -> std::path::PathBuf {
+    dirs::home_dir()
+        .unwrap_or_else(|| std::path::PathBuf::from("."))
+        .join(".config")
+        .join("polymarket")
+        .join("operator_approved.json")
+}
+
+/// Ensure the local signing key is registered as an operator on CTF Exchange.
+/// Calls setOperatorApproval once and caches the result.
+pub async fn ensure_operator_approval(
+    wallet_addr: &str,
+    signer_addr: &str,
+    neg_risk: bool,
+) -> Result<()> {
+    use crate::config::Contracts;
+
+    // If maker == signer, no operator approval needed
+    if wallet_addr.to_lowercase() == signer_addr.to_lowercase() {
+        return Ok(());
+    }
+
+    let cache_path = operator_approval_cache_path();
+    if cache_path.exists() {
+        let data = std::fs::read_to_string(&cache_path).unwrap_or_default();
+        let cached: serde_json::Value = serde_json::from_str(&data).unwrap_or_default();
+        let key = format!("{}-{}", wallet_addr.to_lowercase(), signer_addr.to_lowercase());
+        if cached.get(&key).and_then(|v| v.as_bool()) == Some(true) {
+            return Ok(());
+        }
+    }
+
+    eprintln!(
+        "[polymarket] Setting up operator approval: {} can sign for {}",
+        signer_addr, wallet_addr
+    );
+    let exchange = Contracts::exchange_for(neg_risk);
+    match set_operator_approval(exchange, signer_addr).await {
+        Ok(tx_hash) => eprintln!("[polymarket] Operator approval tx: {}", tx_hash),
+        Err(e) => {
+            // setOperatorApproval may revert if already set or contract version differs;
+            // warn but proceed — the CLOB API validates signatures independently.
+            eprintln!("[polymarket] Warning: operator approval failed ({}). Proceeding anyway.", e);
+            return Ok(());
+        }
+    }
+
+    // Cache approval
+    if let Some(parent) = cache_path.parent() {
+        let _ = std::fs::create_dir_all(parent);
+    }
+    let key = format!("{}-{}", wallet_addr.to_lowercase(), signer_addr.to_lowercase());
+    let mut cached: serde_json::Map<String, serde_json::Value> = serde_json::Map::new();
+    cached.insert(key, serde_json::Value::Bool(true));
+    let _ = std::fs::write(&cache_path, serde_json::to_string(&cached).unwrap_or_default());
+
+    Ok(()
+    )
+}

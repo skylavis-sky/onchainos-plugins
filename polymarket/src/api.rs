@@ -359,11 +359,22 @@ pub async fn post_order(
     for (k, v) in &headers {
         req = req.header(k.as_str(), v.as_str());
     }
-    req.send()
-        .await?
-        .json()
-        .await
-        .context("parsing post-order response")
+    let raw = req.send().await?.text().await?;
+    // If the response contains a top-level "error" field (API-level rejection), propagate it
+    if let Ok(v) = serde_json::from_str::<serde_json::Value>(&raw) {
+        if let Some(err) = v.get("error").and_then(|e| e.as_str()) {
+            return Ok(OrderResponse {
+                success: Some(false),
+                order_id: None,
+                status: None,
+                making_amount: None,
+                taking_amount: None,
+                error_msg: Some(err.to_string()),
+                tx_hashes: vec![],
+            });
+        }
+    }
+    serde_json::from_str(&raw).with_context(|| format!("parsing post-order response: {}", raw))
 }
 
 pub async fn cancel_order(
