@@ -8,6 +8,38 @@ use serde_json::Value;
 use crate::auth::l2_headers;
 use crate::config::{Credentials, Urls};
 
+// ─── Custom serde helpers ─────────────────────────────────────────────────────
+
+fn de_f64_or_str<'de, D>(deserializer: D) -> Result<Option<f64>, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    let v: Option<serde_json::Value> = Option::deserialize(deserializer)?;
+    match v {
+        None => Ok(None),
+        Some(serde_json::Value::Number(n)) => Ok(n.as_f64()),
+        Some(serde_json::Value::String(s)) => s
+            .parse()
+            .ok()
+            .map(Some)
+            .ok_or_else(|| serde::de::Error::custom("invalid float")),
+        Some(serde_json::Value::Null) => Ok(None),
+        _ => Ok(None),
+    }
+}
+
+fn de_str_or_num_as_str<'de, D>(deserializer: D) -> Result<Option<String>, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    let v: Option<serde_json::Value> = Option::deserialize(deserializer)?;
+    match v {
+        None | Some(serde_json::Value::Null) => Ok(None),
+        Some(serde_json::Value::String(s)) => Ok(Some(s)),
+        Some(n) => Ok(Some(n.to_string())),
+    }
+}
+
 // ─── Shared types ─────────────────────────────────────────────────────────────
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -43,7 +75,8 @@ pub struct ClobMarket {
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct GammaMarket {
-    pub id: Option<u64>,
+    #[serde(default, deserialize_with = "de_str_or_num_as_str")]
+    pub id: Option<String>,
     #[serde(rename = "conditionId")]
     pub condition_id: Option<String>,
     pub slug: Option<String>,
@@ -65,19 +98,21 @@ pub struct GammaMarket {
     #[serde(rename = "outcomePrices")]
     pub outcome_prices: Option<String>,
     pub outcomes: Option<String>,
+    #[serde(default, deserialize_with = "de_f64_or_str")]
     pub liquidity: Option<f64>,
+    #[serde(default, deserialize_with = "de_f64_or_str")]
     pub volume: Option<f64>,
-    #[serde(rename = "volume24hr")]
+    #[serde(rename = "volume24hr", default, deserialize_with = "de_f64_or_str")]
     pub volume24hr: Option<f64>,
-    #[serde(rename = "bestBid")]
-    pub best_bid: Option<String>,
-    #[serde(rename = "bestAsk")]
-    pub best_ask: Option<String>,
-    #[serde(rename = "lastTradePrice")]
-    pub last_trade_price: Option<String>,
-    #[serde(rename = "orderPriceMinTickSize")]
+    #[serde(rename = "bestBid", default, deserialize_with = "de_f64_or_str")]
+    pub best_bid: Option<f64>,
+    #[serde(rename = "bestAsk", default, deserialize_with = "de_f64_or_str")]
+    pub best_ask: Option<f64>,
+    #[serde(rename = "lastTradePrice", default, deserialize_with = "de_f64_or_str")]
+    pub last_trade_price: Option<f64>,
+    #[serde(rename = "orderPriceMinTickSize", default, deserialize_with = "de_f64_or_str")]
     pub order_price_min_tick_size: Option<f64>,
-    #[serde(rename = "orderMinSize")]
+    #[serde(rename = "orderMinSize", default, deserialize_with = "de_f64_or_str")]
     pub order_min_size: Option<f64>,
     #[serde(rename = "negRisk", default)]
     pub neg_risk: bool,
@@ -476,7 +511,19 @@ pub async fn get_gamma_market_by_slug(client: &Client, slug: &str) -> Result<Gam
         v
     };
 
-    serde_json::from_value(market).context("parsing Gamma market by slug")
+    let parsed: GammaMarket =
+        serde_json::from_value(market).context("parsing Gamma market by slug")?;
+
+    if parsed.condition_id.as_deref().unwrap_or("").is_empty()
+        && parsed.slug.as_deref().unwrap_or("").is_empty()
+    {
+        return Err(anyhow::anyhow!(
+            "Market not found: no market with slug '{}'",
+            slug
+        ));
+    }
+
+    Ok(parsed)
 }
 
 // ─── Data API calls ───────────────────────────────────────────────────────────
