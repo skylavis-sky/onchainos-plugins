@@ -1,10 +1,15 @@
 ---
 name: pancakeswap-clmm
 description: "PancakeSwap V3 CLMM farming plugin. Stake V3 LP NFTs into MasterChefV3 to earn CAKE rewards, harvest CAKE, collect swap fees, and view positions across BSC, Ethereum, Base, and Arbitrum. Trigger phrases: stake LP NFT, farm CAKE, harvest CAKE rewards, collect fees, unfarm position, PancakeSwap farming, view positions."
-license: MIT
-metadata:
-  author: skylavis-sky
-  version: "0.1.0"
+version: "0.1.0"
+author: "skylavis-sky"
+tags:
+  - dex
+  - liquidity
+  - clmm
+  - farming
+  - v3
+  - pancakeswap
 ---
 
 ## Do NOT use for

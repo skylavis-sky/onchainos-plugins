@@ -1,7 +1,14 @@
 ---
 name: pancakeswap
-version: "0.1.0"
 description: "Swap tokens and manage liquidity on PancakeSwap V3"
+version: "0.1.0"
+author: "skylavis-sky"
+tags:
+  - dex
+  - swap
+  - liquidity
+  - pancakeswap
+  - bsc
 ---
 
 # PancakeSwap V3 Skill

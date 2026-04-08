@@ -1,10 +1,14 @@
 ---
 name: compound-v3
 description: "Compound V3 (Comet) lending plugin: supply collateral, borrow/repay the base asset, and claim COMP rewards. Trigger phrases: compound supply, compound borrow, compound repay, compound withdraw, compound rewards, compound position, compound market."
-license: MIT
-metadata:
-  author: skylavis-sky
-  version: "0.1.0"
+version: "0.1.0"
+author: "skylavis-sky"
+tags:
+  - lending
+  - borrowing
+  - defi
+  - compound
+  - comet
 ---
 
 ## Architecture

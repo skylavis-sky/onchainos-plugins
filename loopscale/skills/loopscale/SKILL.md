@@ -1,10 +1,15 @@
 ---
 name: loopscale
 description: "Lend, borrow, and manage positions on Loopscale — Solana order-book credit protocol. Trigger phrases: loopscale lend, loopscale borrow, loopscale deposit, loopscale vault, loopscale repay, loopscale withdraw, solana lending loopscale, loopscale position, borrow USDC loopscale, deposit SOL loopscale."
-license: MIT
-metadata:
-  author: skylavis-sky
-  version: "0.1.0"
+version: "0.1.0"
+author: "skylavis-sky"
+tags:
+  - lending
+  - borrowing
+  - solana
+  - loopscale
+  - vault
+  - defi
 ---
 
 ## Overview

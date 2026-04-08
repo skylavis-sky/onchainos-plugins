@@ -1,10 +1,17 @@
 ---
 name: archimedes
 description: "Archimedes Finance leveraged yield protocol on Ethereum. Trigger phrases: open archimedes position, open leveraged position, archimedes yield, deposit to archimedes, close archimedes position, my archimedes positions, archimedes protocol info, archimedes available leverage, archimedes NFT positions, leveraged OUSD yield"
-license: MIT
-metadata:
-  author: skylavis-sky
-  version: "0.1.0"
+version: "0.1.0"
+author: "skylavis-sky"
+tags:
+  - leverage
+  - yield
+  - lending
+  - defi
+  - ethereum
+  - ousd
+  - nft-position
+  - curve
 ---
 
 # Archimedes Finance Skill

@@ -1,10 +1,18 @@
 ---
 name: pancakeswap-v2
 description: "Swap tokens and provide full-range liquidity on PancakeSwap V2 — the xyk AMM on BSC and Base. Trigger phrases: swap on pancakeswap v2, pancake swap, pcs v2 swap, add liquidity pancakeswap, remove liquidity pancake, pancake amm, pancakeswap v2 quote, check pancake pair."
-license: MIT
-metadata:
-  author: skylavis-sky
-  version: "0.1.0"
+version: "0.1.0"
+author: "skylavis-sky"
+tags:
+  - dex
+  - swap
+  - liquidity
+  - amm
+  - pancakeswap
+  - bsc
+  - v2
+  - xyk
+  - lp
 ---
 
 ## Do NOT use for

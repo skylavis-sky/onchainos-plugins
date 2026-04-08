@@ -1,0 +1,10 @@
+{
+  "name": "spectra",
+  "description": "Spectra Finance yield tokenization plugin. Deposit ERC-4626 assets to receive PT (fixed yield) and YT (variable yield). Redeem PT for underlying at maturity. Claim accrued yield from YT. Swap PT for IBT via Curve StableSwap. Trigger phrases: Spectra deposit, Spectra redeem, claim yield Spectra, Spectra PT, Spectra YT, fixed yield Base, yield tokenization, buy PT Spectra, sell PT Spectra, Spectra pools, Spectra position.",
+  "version": "1.0.0",
+  "author": {"name": "skylavis-sky", "github": "skylavis-sky"},
+  "homepage": "https://github.com/skylavis-sky/onchainos-plugins/tree/main/spectra",
+  "repository": "https://github.com/skylavis-sky/onchainos-plugins",
+  "license": "MIT",
+  "keywords": ["yield-tokenization", "fixed-yield", "pt", "yt", "interest-rate-derivatives"]
+}

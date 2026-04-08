@@ -1,10 +1,14 @@
 ---
 name: lido
 description: "Lido liquid staking plugin — stake ETH to get stETH, wrap/unwrap wstETH, request and claim ETH withdrawals. Trigger phrases: stake ETH lido, lido staking, stake to lido, lido liquid staking, lido stETH, convert stETH to wstETH, wrap stETH, unwrap wstETH, request lido withdrawal, claim lido ETH, lido withdraw."
-license: MIT
-metadata:
-  author: skylavis-sky
-  version: "0.1.0"
+version: "0.1.0"
+author: "skylavis-sky"
+tags:
+  - staking
+  - liquid-staking
+  - ethereum
+  - steth
+  - wsteth
 ---
 
 ## Do NOT use for...

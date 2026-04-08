@@ -1,10 +1,29 @@
+schema_version: 1
 name: sanctum-validator-lst
-version: 0.1.0
+version: "0.1.0"
 description: "Stake SOL into validator LSTs and swap between LSTs via Sanctum Router on Solana"
-category: defi-protocol
-chains:
-  - 501
-binary: sanctum-validator-lst
+author:
+  name: skylavis-sky
+  github: skylavis-sky
 license: MIT
-metadata:
-  author: skylavis-sky
+category: defi-protocol
+tags:
+  - staking
+  - lst
+  - solana
+  - sanctum
+  - liquid-staking
+  - validator
+components:
+  skill:
+    dir: skills/sanctum-validator-lst
+build:
+  lang: rust
+  binary_name: sanctum-validator-lst
+  source_repo: skylavis-sky/onchainos-plugins
+  source_commit: "6882d08d56eb3be8f68700f92def6f0bfc997fe8"
+  source_dir: sanctum-validator-lst
+api_calls:
+  - "https://extra-api.sanctum.so"
+  - "https://sanctum-s-api.fly.dev"
+  - "https://api.mainnet-beta.solana.com"

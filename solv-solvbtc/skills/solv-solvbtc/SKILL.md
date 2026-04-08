@@ -1,10 +1,14 @@
 ---
 name: solv-solvbtc
 description: "Solv Protocol SolvBTC plugin. Trigger phrases: mint SolvBTC, deposit WBTC into Solv, redeem SolvBTC, cancel redemption, wrap SolvBTC into xSolvBTC, unwrap xSolvBTC, SolvBTC price, xSolvBTC NAV, Solv TVL, my SolvBTC balance, yield on BTC"
-license: Apache-2.0
-metadata:
-  author: skylavis-sky
-  version: "0.1.0"
+version: "0.1.0"
+author: "skylavis-sky"
+tags:
+  - btc
+  - yield
+  - liquid-btc
+  - arbitrum
+  - ethereum
 ---
 
 # solv-solvbtc

@@ -1,0 +1,10 @@
+{
+  "name": "term-structure",
+  "description": "Lend and borrow at fixed rates on TermMax (Term Structure) — fixed-rate AMM on Arbitrum, Ethereum, BNB. Trigger phrases: term structure lend, termmax fixed rate, fixed rate borrow term structure, termmax deposit, term structure position, fixed rate yield termmax, term structure redeem.",
+  "version": "1.0.0",
+  "author": {"name": "skylavis-sky", "github": "skylavis-sky"},
+  "homepage": "https://github.com/skylavis-sky/onchainos-plugins/tree/main/term-structure",
+  "repository": "https://github.com/skylavis-sky/onchainos-plugins",
+  "license": "MIT",
+  "keywords": ["lending", "borrowing", "defi", "fixed-rate", "yield", "term-structure", "termmax"]
+}

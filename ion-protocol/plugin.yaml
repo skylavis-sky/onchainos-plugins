@@ -1,51 +1,28 @@
+schema_version: 1
 name: ion-protocol
-version: 0.1.0
-description: Ion Protocol CDP lending plugin for LRT/LST collateral on Ethereum Mainnet
-category: defi-protocol
+version: "0.1.0"
+description: "Ion Protocol CDP lending plugin for LRT/LST collateral on Ethereum Mainnet"
+author:
+  name: skylavis-sky
+  github: skylavis-sky
 license: MIT
-
-chains:
-  - id: 1
-    name: Ethereum Mainnet
-    rpc: https://ethereum.publicnode.com
-
-pools:
-  rsETH_wstETH:
-    ionPool: "0x0000000000E33e35EE6052fae87bfcFac61b1da9"
-    gemJoin: "0x3bC3AC09d1ee05393F2848d82cb420f347954432"
-    collateral: "0xA1290d69c65A6Fe4DF752f95823fae25cB99e5A7"  # rsETH
-    lendToken: "0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0"  # wstETH
-    ilkIndex: 0
-    symbol: "rsETH"
-
-  rswETH_wstETH:
-    ionPool: "0x00000000007C8105548f9d0eE081987378a6bE93"
-    gemJoin: "0xD696f9EA3299113324B9065ab19b70758256cf16"
-    collateral: "0xFAe103DC9cf190eD75350761e95403b7b8aFa6c0"  # rswETH
-    lendToken: "0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0"  # wstETH
-    ilkIndex: 0
-    symbol: "rswETH"
-
-  ezETH_WETH:
-    ionPool: "0x00000000008a3A77bd91bC738Ed2Efaa262c3763"
-    gemJoin: "0xe3692b2E55Eb2494cA73610c3b027F53815CCD39"
-    collateral: "0xbf5495Efe5DB9ce00f80364C8B423567e58d2110"  # ezETH
-    lendToken: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"  # WETH
-    ilkIndex: 0
-    symbol: "ezETH"
-
-  weETH_wstETH:
-    ionPool: "0x0000000000eaEbd95dAfcA37A39fd09745739b78"
-    gemJoin: "0x3f6119b0328c27190be39597213ea1729f061876"
-    collateral: "0xCd5fE23C85820F7B72D0926FC9b05b43E359b7ee"  # weETH
-    lendToken: "0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0"  # wstETH
-    ilkIndex: 0
-    symbol: "weETH"
-
-shared_contracts:
-  whitelist: "0x7E317f99aA313669AaCDd8dB3927ff3aCB562dAD"
-  yieldOracle: "0x437CC840e234C2127f54CD59B0B18aF59c586760"
-
-tokens:
-  wstETH: "0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0"
-  WETH: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"
+category: defi-protocol
+tags:
+  - lending
+  - cdp
+  - lrt
+  - lst
+  - ethereum
+  - collateral
+  - defi
+components:
+  skill:
+    dir: skills/ion-protocol
+build:
+  lang: rust
+  binary_name: ion-protocol
+  source_repo: skylavis-sky/onchainos-plugins
+  source_commit: "6882d08d56eb3be8f68700f92def6f0bfc997fe8"
+  source_dir: ion-protocol
+api_calls:
+  - "https://ethereum.publicnode.com"

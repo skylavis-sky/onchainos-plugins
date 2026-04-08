@@ -1,0 +1,10 @@
+{
+  "name": "quickswap-dex",
+  "description": "Swap tokens, add/remove liquidity on QuickSwap DEX (Polygon). Trigger phrases: quickswap swap, swap on quickswap, quickswap liquidity, add liquidity quickswap, remove liquidity quickswap, quickswap polygon, quickswap price, quickswap quote.",
+  "version": "1.0.0",
+  "author": {"name": "skylavis-sky", "github": "skylavis-sky"},
+  "homepage": "https://github.com/skylavis-sky/onchainos-plugins/tree/main/quickswap-dex",
+  "repository": "https://github.com/skylavis-sky/onchainos-plugins",
+  "license": "MIT",
+  "keywords": ["quickswap", "dex", "polygon", "amm", "swap", "liquidity"]
+}

@@ -1,22 +1,14 @@
 ---
 name: spectra
 description: "Spectra Finance yield tokenization plugin. Deposit ERC-4626 assets to receive PT (fixed yield) and YT (variable yield). Redeem PT for underlying at maturity. Claim accrued yield from YT. Swap PT for IBT via Curve StableSwap. Trigger phrases: Spectra deposit, Spectra redeem, claim yield Spectra, Spectra PT, Spectra YT, fixed yield Base, yield tokenization, buy PT Spectra, sell PT Spectra, Spectra pools, Spectra position."
-trigger_phrases:
-  - "Spectra"
-  - "spectra finance"
-  - "spectra pt"
-  - "spectra yt"
-  - "deposit spectra"
-  - "redeem spectra"
-  - "claim yield spectra"
-  - "swap pt spectra"
-  - "fixed yield base"
-  - "yield tokenization"
-  - "principal token"
-license: MIT
-metadata:
-  author: GeoGu360
-  version: "0.1.0"
+version: "0.1.0"
+author: "skylavis-sky"
+tags:
+  - yield-tokenization
+  - fixed-yield
+  - pt
+  - yt
+  - interest-rate-derivatives
 ---
 
 ## Architecture

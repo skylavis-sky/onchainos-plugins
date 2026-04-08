@@ -1,9 +1,15 @@
 ---
 name: across
-version: 0.1.0
 description: "Across Protocol cross-chain bridge. Bridge tokens between Ethereum (1), Arbitrum (42161), Base (8453), Optimism (10), and Polygon (137). Supports USDC, WETH, and other ERC-20 tokens plus native ETH."
-author: skylavis-sky
-chains: [1, 10, 137, 8453, 42161]
+version: "0.1.0"
+author: "skylavis-sky"
+tags:
+  - bridge
+  - cross-chain
+  - ethereum
+  - arbitrum
+  - base
+  - optimism
 ---
 
 # Across Protocol Bridge Plugin

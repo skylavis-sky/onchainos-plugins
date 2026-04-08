@@ -1,10 +1,14 @@
 ---
 name: clanker
 description: "Deploy and manage Clanker ERC-20 tokens on Base and Arbitrum. Trigger phrases: deploy token, launch token on Clanker, create token on Base, search Clanker tokens, list latest tokens, claim LP rewards, claim Clanker fees."
-license: MIT
-metadata:
-  author: skylavis-sky
-  version: "0.1.0"
+version: "0.1.0"
+author: "skylavis-sky"
+tags:
+  - token-launch
+  - meme
+  - erc20
+  - uniswap-v4
+  - base
 ---
 
 ## Do NOT use for

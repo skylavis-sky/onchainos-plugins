@@ -1,0 +1,10 @@
+{
+  "name": "sanctum-validator-lst",
+  "description": "Stake SOL into validator LSTs and swap between LSTs via Sanctum Router on Solana. Trigger phrases: sanctum stake, sanctum validator lst, stake sol jitosol, stake sol bsol, swap lst sanctum, sanctum swap liquid staking, sanctum lsts, sanctum validator staking.",
+  "version": "1.0.0",
+  "author": {"name": "skylavis-sky", "github": "skylavis-sky"},
+  "homepage": "https://github.com/skylavis-sky/onchainos-plugins/tree/main/sanctum-validator-lst",
+  "repository": "https://github.com/skylavis-sky/onchainos-plugins",
+  "license": "MIT",
+  "keywords": ["staking", "lst", "solana", "sanctum", "liquid-staking", "validator"]
+}

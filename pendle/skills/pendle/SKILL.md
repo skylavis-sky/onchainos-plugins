@@ -1,10 +1,14 @@
 ---
 name: pendle
 description: "Pendle Finance yield tokenization plugin. Buy or sell fixed-yield PT tokens, trade YT yield tokens, provide or remove AMM liquidity, and mint or redeem PT+YT pairs. Trigger phrases: buy PT, sell PT, buy YT, sell YT, Pendle fixed yield, Pendle liquidity, add liquidity Pendle, remove liquidity Pendle, mint PT YT, redeem PT YT, Pendle positions, Pendle markets, Pendle APY."
-license: MIT
-metadata:
-  author: skylavis-sky
-  version: "0.1.0"
+version: "0.1.0"
+author: "skylavis-sky"
+tags:
+  - yield-trading
+  - fixed-yield
+  - pt
+  - yt
+  - liquidity
 ---
 
 ## Architecture

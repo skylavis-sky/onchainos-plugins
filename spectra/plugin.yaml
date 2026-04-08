@@ -3,8 +3,8 @@ name: spectra
 version: "0.1.0"
 description: "Spectra Finance yield tokenization plugin — deposit/redeem PT+YT, claim accrued yield, swap PT via Curve. Primary chain: Base (8453). Secondary: Arbitrum (42161), Ethereum (1)."
 author:
-  name: GeoGu360
-  github: GeoGu360
+  name: skylavis-sky
+  github: skylavis-sky
 category: defi-protocol
 tags:
   - yield-tokenization
@@ -21,8 +21,8 @@ components:
 build:
   lang: rust
   binary_name: spectra
-  source_repo: GeoGu360/onchainos-plugins
-  source_commit: "0000000000000000000000000000000000000000"
+  source_repo: skylavis-sky/onchainos-plugins
+  source_commit: "6882d08d56eb3be8f68700f92def6f0bfc997fe8"
   source_dir: spectra
 
 api_calls:

@@ -1,10 +1,15 @@
 ---
 name: aura-finance
 description: "Deposit Balancer LP tokens (BPT) into Aura Finance for boosted BAL and AURA rewards on Ethereum. Trigger phrases: aura finance deposit, aura bpt staking, aura rewards, claim aura, aura finance pools, lock aura, vlAURA, aura finance position, balancer boosted yield aura."
-license: MIT
-metadata:
-  author: skylavis-sky
-  version: "0.1.0"
+version: "0.1.0"
+author: "skylavis-sky"
+tags:
+  - yield
+  - balancer
+  - aura
+  - vlAURA
+  - ethereum
+  - defi
 ---
 
 ## Architecture

@@ -1,10 +1,16 @@
 ---
 name: zerolend
 description: "Supply, borrow, repay, and withdraw on ZeroLend — an Aave V3 fork on zkSync Era, Linea, and Blast. Trigger phrases: zerolend supply, zerolend borrow, zerolend repay, zerolend deposit, zerolend withdraw, lend on zerolend, borrow on linea, borrow on blast, zerolend position, zerolend health factor."
-license: MIT
-metadata:
-  author: skylavis-sky
-  version: "0.1.0"
+version: "0.1.0"
+author: "skylavis-sky"
+tags:
+  - zerolend
+  - lending
+  - aave-fork
+  - zksync
+  - linea
+  - blast
+  - defi
 ---
 
 # ZeroLend Skill

@@ -1,10 +1,16 @@
 ---
 name: term-structure
 description: "Lend and borrow at fixed rates on TermMax (Term Structure) — fixed-rate AMM on Arbitrum, Ethereum, BNB. Trigger phrases: term structure lend, termmax fixed rate, fixed rate borrow term structure, termmax deposit, term structure position, fixed rate yield termmax, term structure redeem."
-license: MIT
-metadata:
-  author: skylavis-sky
-  version: "0.1.0"
+version: "0.1.0"
+author: "skylavis-sky"
+tags:
+  - lending
+  - borrowing
+  - defi
+  - fixed-rate
+  - yield
+  - term-structure
+  - termmax
 ---
 
 # Term Structure (TermMax) Plugin

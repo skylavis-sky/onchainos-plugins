@@ -1,10 +1,16 @@
 ---
 name: debridge
 description: "deBridge DLN cross-chain bridge plugin. Supports quoting and executing cross-chain token swaps across EVM chains (Ethereum, Arbitrum, Base, Optimism, BSC, Polygon) and Solana via the Decentralized Liquidity Network (DLN). Trigger phrases: bridge tokens debridge, cross-chain swap debridge, deBridge DLN, debridge bridge USDC, move tokens across chains, debridge get quote, check bridge status debridge, debridge supported chains, cross-chain USDC arbitrum to base, bridge solana to evm, evm to solana bridge."
-license: MIT
-metadata:
-  author: skylavis-sky
-  version: "0.1.0"
+version: "0.1.0"
+author: "skylavis-sky"
+tags:
+  - bridge
+  - cross-chain
+  - swap
+  - evm
+  - solana
+  - debridge
+  - dln
 ---
 
 ## Do NOT use for

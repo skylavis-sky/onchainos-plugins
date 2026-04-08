@@ -1,10 +1,15 @@
 ---
 name: quickswap-dex
 description: "Swap tokens, add/remove liquidity on QuickSwap DEX (Polygon). Trigger phrases: quickswap swap, swap on quickswap, quickswap liquidity, add liquidity quickswap, remove liquidity quickswap, quickswap polygon, quickswap price, quickswap quote."
-license: MIT
-metadata:
-  author: skylavis-sky
-  version: "0.1.0"
+version: "0.1.0"
+author: "skylavis-sky"
+tags:
+  - quickswap
+  - dex
+  - polygon
+  - amm
+  - swap
+  - liquidity
 ---
 
 # quickswap-dex

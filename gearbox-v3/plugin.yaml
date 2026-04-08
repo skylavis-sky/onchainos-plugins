@@ -24,7 +24,7 @@ build:
   lang: rust
   binary_name: gearbox-v3
   source_repo: skylavis-sky/onchainos-plugins
-  source_commit: ""
+  source_commit: "6882d08d56eb3be8f68700f92def6f0bfc997fe8"
   source_dir: gearbox-v3
 
 api_calls:

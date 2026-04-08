@@ -1,9 +1,15 @@
 ---
 name: mayan
-version: 0.1.0
 description: "Mayan cross-chain swap. Bridge and swap tokens between Solana (501), Ethereum (1), Arbitrum (42161), Base (8453), Optimism (10), Polygon (137), BSC (56), and Avalanche (43114) using Swift, MCTP, and Wormhole routes."
-author: skylavis-sky
-chains: [1, 10, 56, 137, 501, 8453, 42161, 43114]
+version: "0.1.0"
+author: "skylavis-sky"
+tags:
+  - bridge
+  - cross-chain
+  - solana
+  - ethereum
+  - arbitrum
+  - base
 ---
 
 # Mayan Cross-Chain Swap Plugin

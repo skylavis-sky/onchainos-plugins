@@ -1,19 +1,28 @@
+schema_version: 1
 name: aura-finance
-version: 0.1.0
-description: Aura Finance Balancer yield plugin — deposit BPT, claim rewards, lock AURA for vlAURA
-category: defi-protocol
+version: "0.1.0"
+description: "Aura Finance Balancer yield plugin — deposit BPT, claim rewards, lock AURA for vlAURA"
+author:
+  name: skylavis-sky
+  github: skylavis-sky
 license: MIT
-
-chains:
-  - id: 1
-    name: Ethereum Mainnet
-    rpc: https://ethereum.publicnode.com
-
-contracts:
-  booster: "0xA57b8d98dAE62B26Ec3bcC4a365338157060B234"
-  aura_token: "0xC0c293ce456fF0ED870ADd98a0828Dd4d2903DBF"
-  aura_locker: "0x3Fa73f1E5d8A792C80F426fc8F84FBF7Ce9bBCAC"
-  aura_bal: "0x616e8BfA43F920657B3497DBf40D6b1A02D4608d"
-  bal_token: "0xba100000625a3754423978a60c9317c58a424e3D"
-
-source_commit: "feat/batch-11-plugins"
+category: defi-protocol
+tags:
+  - yield
+  - balancer
+  - aura
+  - vlAURA
+  - ethereum
+  - defi
+components:
+  skill:
+    dir: skills/aura-finance
+build:
+  lang: rust
+  binary_name: aura-finance
+  source_repo: skylavis-sky/onchainos-plugins
+  source_commit: "6882d08d56eb3be8f68700f92def6f0bfc997fe8"
+  source_dir: aura-finance
+api_calls:
+  - "https://api.balancer.fi"
+  - "https://ethereum.publicnode.com"

@@ -3,11 +3,10 @@ name: zerolend
 version: "0.1.0"
 description: "Supply, borrow, and manage positions on ZeroLend (Aave V3 fork) on zkSync Era, Linea, and Blast"
 author:
-  name: "skylavis-sky"
-  github: "skylavis-sky"
+  name: skylavis-sky
+  github: skylavis-sky
 license: MIT
 category: defi-protocol
-type: "community"
 tags:
   - zerolend
   - lending
@@ -16,16 +15,16 @@ tags:
   - linea
   - blast
   - defi
-
 components:
   skill:
     dir: skills/zerolend
-
-source_repo: skylavis-sky/onchainos-plugins
-source_dir: zerolend
-source_commit: "TBD"
-
+build:
+  lang: rust
+  binary_name: zerolend
+  source_repo: skylavis-sky/onchainos-plugins
+  source_commit: "6882d08d56eb3be8f68700f92def6f0bfc997fe8"
+  source_dir: zerolend
 api_calls:
-  - "https://rpc.linea.build (Linea RPC)"
-  - "https://mainnet.era.zksync.io (zkSync RPC)"
-  - "https://rpc.blast.io (Blast RPC)"
+  - "https://rpc.linea.build"
+  - "https://mainnet.era.zksync.io"
+  - "https://rpc.blast.io"

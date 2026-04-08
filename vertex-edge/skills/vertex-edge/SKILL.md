@@ -1,10 +1,15 @@
 ---
 name: vertex-edge
 description: "Query markets, positions, and deposit collateral on Vertex Edge - cross-chain perpetual DEX on Arbitrum. Trigger phrases: vertex edge markets, vertex perp positions, vertex orderbook, vertex deposit, vertex price, vertex edge portfolio, vertex funding rate."
-license: MIT
-metadata:
-  author: skylavis-sky
-  version: "0.1.0"
+version: "0.1.0"
+author: "skylavis-sky"
+tags:
+  - perpetuals
+  - dex
+  - arbitrum
+  - orderbook
+  - collateral
+  - trading
 ---
 
 # Vertex Edge Plugin

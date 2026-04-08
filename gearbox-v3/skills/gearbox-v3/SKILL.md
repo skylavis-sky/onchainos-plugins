@@ -1,10 +1,16 @@
 ---
 name: gearbox-v3
 description: "Open and manage leveraged Credit Accounts on Gearbox V3 (Arbitrum, Ethereum). Trigger phrases: gearbox open account, gearbox leverage, gearbox credit account, gearbox borrow, gearbox collateral, gearbox close account, leveraged yield gearbox."
-license: MIT
-metadata:
-  author: skylavis-sky
-  version: "0.1.0"
+version: "0.1.0"
+author: "skylavis-sky"
+tags:
+  - leverage
+  - credit-account
+  - borrowing
+  - defi
+  - gearbox
+  - collateral
+  - health-factor
 ---
 
 # Gearbox V3 Skill

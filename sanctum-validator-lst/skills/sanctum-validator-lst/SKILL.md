@@ -1,10 +1,15 @@
 ---
 name: sanctum-validator-lst
 description: "Stake SOL into validator LSTs and swap between LSTs via Sanctum Router on Solana. Trigger phrases: sanctum stake, sanctum validator lst, stake sol jitosol, stake sol bsol, swap lst sanctum, sanctum swap liquid staking, sanctum lsts, sanctum validator staking."
-license: MIT
-metadata:
-  author: skylavis-sky
-  version: "0.1.0"
+version: "0.1.0"
+author: "skylavis-sky"
+tags:
+  - staking
+  - lst
+  - solana
+  - sanctum
+  - liquid-staking
+  - validator
 ---
 
 # Sanctum Validator LSTs Plugin

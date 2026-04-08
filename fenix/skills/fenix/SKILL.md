@@ -1,10 +1,17 @@
 ---
 name: fenix
 description: "Fenix Finance plugin for swapping tokens and managing concentrated liquidity on Blast (chain 81457). Trigger phrases: swap on Fenix, Fenix swap, Fenix Finance swap, add liquidity Fenix, Fenix pools, get Fenix quote, Fenix DEX, trade on Blast, Fenix add-liquidity, concentrated liquidity Blast, Algebra swap Blast."
-license: MIT
-metadata:
-  author: skylavis-sky
-  version: "0.1.0"
+version: "0.1.0"
+author: "skylavis-sky"
+tags:
+  - dex
+  - swap
+  - liquidity
+  - blast
+  - algebra
+  - clmm
+  - concentrated-liquidity
+  - ve33
 ---
 
 ## Architecture

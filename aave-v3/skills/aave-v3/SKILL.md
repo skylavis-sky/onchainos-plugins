@@ -1,10 +1,16 @@
 ---
 name: aave-v3
 description: "Aave V3 lending and borrowing. Trigger phrases: supply to aave, deposit to aave, borrow from aave, repay aave loan, aave health factor, my aave positions, aave interest rates, enable emode, disable collateral, claim aave rewards."
-license: MIT
-metadata:
-  author: skylavis-sky
-  version: "0.1.0"
+version: "0.1.0"
+author: "skylavis-sky"
+tags:
+  - lending
+  - borrowing
+  - defi
+  - earn
+  - aave
+  - collateral
+  - health-factor
 ---
 
 # Aave V3 Skill

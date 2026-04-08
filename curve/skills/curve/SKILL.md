@@ -1,10 +1,14 @@
 ---
 name: curve
 description: "Curve DEX plugin for swapping stablecoins and managing liquidity on Curve Finance. Trigger phrases: swap on Curve, Curve swap, add liquidity Curve, remove liquidity Curve, Curve pool APY, Curve pools, get Curve quote."
-license: MIT
-metadata:
-  author: skylavis-sky
-  version: "0.1.0"
+version: "0.1.0"
+author: "skylavis-sky"
+tags:
+  - dex
+  - swap
+  - stablecoin
+  - amm
+  - liquidity
 ---
 
 ## Do NOT use for

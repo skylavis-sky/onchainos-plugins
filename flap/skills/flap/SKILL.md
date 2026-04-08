@@ -1,10 +1,16 @@
 ---
 name: flap
 description: "Interact with Flap Protocol bonding curves on BSC (chain 56): create standard or tax tokens, buy tokens with BNB, sell tokens for BNB, and query bonding curve state. Trigger phrases: create token on Flap, buy Flap token, sell Flap token, check Flap bonding curve, launch meme token BSC, Flap launchpad, flap.sh token. Note: DEX-graduated tokens (status=DEX) must be traded via DEX, not through this plugin."
-license: MIT
-metadata:
-  author: skylavis-sky
-  version: "0.1.0"
+version: "0.1.0"
+author: "skylavis-sky"
+tags:
+  - bsc
+  - launchpad
+  - bonding-curve
+  - meme
+  - tax-token
+  - token-creation
+  - evm
 ---
 
 ## Do NOT use for

@@ -1,10 +1,17 @@
 ---
 name: exactly-protocol
 description: "Fixed-rate and floating-rate lending on Exactly Protocol (Optimism, Ethereum). Trigger phrases: exactly protocol deposit, fixed rate lend, exactly borrow, exactly repay, exactly withdraw, fixed maturity deposit, exactly protocol position, exactly markets, lend at fixed rate, borrow at fixed rate, exactly finance."
-license: MIT
-metadata:
-  author: skylavis-sky
-  version: "0.1.0"
+version: "0.1.0"
+author: "skylavis-sky"
+tags:
+  - lending
+  - borrowing
+  - fixed-rate
+  - defi
+  - earn
+  - optimism
+  - exactly
+  - collateral
 ---
 
 # Exactly Protocol Skill
