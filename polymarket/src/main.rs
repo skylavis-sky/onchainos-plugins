@@ -41,7 +41,7 @@ enum Commands {
     /// Get open positions for the active wallet (no auth required — uses public Data API)
     GetPositions {
         /// Wallet address to query (defaults to active onchainos wallet)
-        #[arg(long)]
+        #[arg(long, alias = "wallet")]
         address: Option<String>,
     },
 
@@ -70,6 +70,10 @@ enum Commands {
         /// Automatically approve USDC.e allowance before placing order
         #[arg(long)]
         approve: bool,
+
+        /// Simulate without submitting order or approval
+        #[arg(long)]
+        dry_run: bool,
     },
 
     /// Sell YES or NO shares in a market (requires POLYMARKET_PRIVATE_KEY)
@@ -97,6 +101,10 @@ enum Commands {
         /// Automatically approve CTF token allowance before placing order
         #[arg(long)]
         approve: bool,
+
+        /// Simulate without submitting order or approval
+        #[arg(long)]
+        dry_run: bool,
     },
 
     /// Cancel a single open order by order ID (requires POLYMARKET_PRIVATE_KEY)
@@ -136,8 +144,9 @@ async fn main() {
             price,
             order_type,
             approve,
+            dry_run,
         } => {
-            commands::buy::run(&market_id, &outcome, &amount, price, &order_type, approve).await
+            commands::buy::run(&market_id, &outcome, &amount, price, &order_type, approve, dry_run).await
         }
         Commands::Sell {
             market_id,
@@ -146,8 +155,9 @@ async fn main() {
             price,
             order_type,
             approve,
+            dry_run,
         } => {
-            commands::sell::run(&market_id, &outcome, &shares, price, &order_type, approve).await
+            commands::sell::run(&market_id, &outcome, &shares, price, &order_type, approve, dry_run).await
         }
         Commands::Cancel { order_id, market, all } => {
             if all {

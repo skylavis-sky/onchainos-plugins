@@ -24,7 +24,26 @@ pub async fn run(
     price: Option<f64>,
     order_type: &str,
     auto_approve: bool,
+    dry_run: bool,
 ) -> Result<()> {
+    if dry_run {
+        println!(
+            "{}",
+            serde_json::json!({
+                "ok": true,
+                "dry_run": true,
+                "data": {
+                    "market_id": market_id,
+                    "outcome": outcome,
+                    "shares": shares,
+                    "estimated_price": null,
+                    "note": "dry-run: order not submitted"
+                }
+            })
+        );
+        return Ok(());
+    }
+
     let private_key = std::env::var("POLYMARKET_PRIVATE_KEY")
         .context("POLYMARKET_PRIVATE_KEY environment variable not set")?;
 
