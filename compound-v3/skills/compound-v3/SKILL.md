@@ -33,6 +33,19 @@ tags:
 
 Default chain: Base (8453). Default market: usdc.
 
+## Pre-flight Checks
+
+Before executing any write command, verify:
+
+1. **Binary installed**: `compound-v3 --version` — if not found, install the plugin via the OKX plugin store
+2. **Wallet connected**: `onchainos wallet status` — confirm wallet is logged in and active address is set
+3. **Chain supported**: target chain must be one of Ethereum (1), Base (8453), Arbitrum (42161), Polygon (137)
+
+If the wallet is not connected, output:
+```
+Please connect your wallet first: run `onchainos wallet login`
+```
+
 ## Commands
 
 ### get-markets — View market statistics
@@ -43,6 +56,8 @@ compound-v3 [--chain 8453] [--market usdc] get-markets
 
 Reads utilization, supply APR, borrow APR, total supply, and total borrow directly from the Comet contract. No wallet needed.
 
+**Display only these fields from output**: market name, utilization (%), supply APR (%), borrow APR (%), total supply (USD), total borrow (USD). Do NOT render raw contract output verbatim.
+
 ---
 
 ### get-position — View account position
@@ -52,6 +67,8 @@ compound-v3 [--chain 8453] [--market usdc] get-position [--wallet 0x...] [--coll
 ```
 
 Returns supply balance, borrow balance, and whether the account is collateralized. Read-only; no confirmation needed.
+
+**Display only these fields from output**: wallet address, supply balance (token units + USD), borrow balance (token units + USD), collateralized status (true/false). Do NOT render raw contract output verbatim.
 
 ---
 
