@@ -35,6 +35,16 @@ pub fn load_credentials() -> Result<Option<Credentials>> {
     if !path.exists() {
         return Ok(None);
     }
+    // Warn if file is readable by group/other
+    if let Ok(meta) = std::fs::metadata(&path) {
+        let mode = meta.permissions().mode();
+        if mode & 0o077 != 0 {
+            eprintln!(
+                "[polymarket] Warning: {} has loose permissions ({:o}). Run: chmod 600 {}",
+                path.display(), mode & 0o777, path.display()
+            );
+        }
+    }
     let data = std::fs::read_to_string(&path)
         .with_context(|| format!("reading {}", path.display()))?;
     let creds: Credentials = serde_json::from_str(&data)
@@ -51,8 +61,11 @@ pub fn save_credentials(creds: &Credentials) -> Result<()> {
         std::fs::create_dir_all(parent)?;
     }
     let data = serde_json::to_string_pretty(creds)?;
-    std::fs::write(&path, data)
+    std::fs::write(&path, &data)
         .with_context(|| format!("writing {}", path.display()))?;
+    // Restrict to owner read/write only (no group/other access)
+    std::fs::set_permissions(&path, std::fs::Permissions::from_mode(0o600))
+        .with_context(|| format!("setting permissions on {}", path.display()))?;
     Ok(())
 }
 

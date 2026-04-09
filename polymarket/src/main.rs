@@ -3,6 +3,7 @@ mod auth;
 mod commands;
 mod config;
 mod onchainos;
+mod sanitize;
 mod signing;
 
 use clap::{Parser, Subcommand};

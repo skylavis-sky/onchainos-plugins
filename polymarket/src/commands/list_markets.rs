@@ -2,6 +2,7 @@ use anyhow::Result;
 use reqwest::Client;
 
 use crate::api::{list_gamma_markets, GammaMarket};
+use crate::sanitize::sanitize_opt_owned;
 
 pub async fn run(limit: u32, keyword: Option<&str>) -> Result<()> {
     let client = Client::new();
@@ -34,10 +35,10 @@ fn format_market(m: &GammaMarket) -> serde_json::Value {
     let no_token_id = token_ids.get(1).cloned().unwrap_or_default();
 
     serde_json::json!({
-        "question": m.question,
+        "question": sanitize_opt_owned(&m.question),
         "condition_id": m.condition_id,
-        "slug": m.slug,
-        "category": m.category,
+        "slug": sanitize_opt_owned(&m.slug),
+        "category": sanitize_opt_owned(&m.category),
         "end_date": m.end_date,
         "active": m.active,
         "closed": m.closed,
