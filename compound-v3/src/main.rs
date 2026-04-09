@@ -9,15 +9,15 @@ use clap::{Parser, Subcommand};
 #[command(name = "compound-v3", about = "Compound V3 (Comet) lending plugin")]
 struct Cli {
     /// Chain ID (1=Ethereum, 8453=Base, 42161=Arbitrum, 137=Polygon)
-    #[arg(long, default_value = "8453")]
+    #[arg(long, default_value = "8453", global = true)]
     chain: u64,
 
     /// Market name (usdc, weth, usdt)
-    #[arg(long, default_value = "usdc")]
+    #[arg(long, default_value = "usdc", global = true)]
     market: String,
 
     /// Simulate without broadcasting on-chain transactions
-    #[arg(long)]
+    #[arg(long, global = true)]
     dry_run: bool,
 
     #[command(subcommand)]
