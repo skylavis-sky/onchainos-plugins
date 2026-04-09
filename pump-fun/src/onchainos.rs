@@ -4,6 +4,22 @@ use serde_json::Value;
 /// Solana native SOL mint address used by onchainos swap
 pub const SOL_MINT: &str = "11111111111111111111111111111111";
 
+/// Resolve the current Solana wallet address (base58) via onchainos.
+fn resolve_wallet_solana() -> anyhow::Result<String> {
+    let output = Command::new("onchainos")
+        .args(["wallet", "balance", "--chain", "501"])
+        .output()?;
+    let json: Value = serde_json::from_str(&String::from_utf8_lossy(&output.stdout))?;
+    let addr = json["data"]["details"][0]["tokenAssets"][0]["address"]
+        .as_str()
+        .unwrap_or("")
+        .to_string();
+    if addr.is_empty() {
+        anyhow::bail!("Could not resolve Solana wallet address. Make sure onchainos is logged in.");
+    }
+    Ok(addr)
+}
+
 /// Execute a swap via `onchainos swap execute`.
 /// Works for both bonding curve tokens and graduated (DEX) tokens.
 pub async fn swap_execute_solana(
@@ -14,6 +30,7 @@ pub async fn swap_execute_solana(
 ) -> anyhow::Result<Value> {
     // Convert bps to percent string (e.g. 100 bps → "1")
     let slippage_pct = format!("{}", slippage_bps / 100);
+    let wallet = resolve_wallet_solana()?;
 
     let output = tokio::process::Command::new("onchainos")
         .args([
@@ -29,6 +46,8 @@ pub async fn swap_execute_solana(
             readable_amount,
             "--slippage",
             &slippage_pct,
+            "--wallet",
+            &wallet,
         ])
         .output()
         .await?;
@@ -67,7 +86,7 @@ pub fn get_token_balance(mint: &str) -> anyhow::Result<Option<String>> {
     for detail in details {
         if let Some(assets) = detail["tokenAssets"].as_array() {
             for asset in assets {
-                let addr = asset["address"].as_str().unwrap_or("");
+                let addr = asset["tokenAddress"].as_str().unwrap_or("");
                 if addr.eq_ignore_ascii_case(mint) {
                     if let Some(bal) = asset["balance"].as_str()
                         .or_else(|| asset["readableBalance"].as_str())
