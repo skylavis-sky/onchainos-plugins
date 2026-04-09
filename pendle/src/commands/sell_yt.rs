@@ -61,7 +61,6 @@ pub async fn run(
         &calldata,
         Some(&wallet),
         None,
-        true,
         dry_run,
     )
     .await?;

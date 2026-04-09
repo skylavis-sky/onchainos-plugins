@@ -2,14 +2,16 @@
 use std::process::Command;
 use serde_json::Value;
 
-/// Query the currently logged-in wallet address
+/// Query the currently logged-in wallet address for the given EVM chain.
 pub fn resolve_wallet(chain_id: u64) -> anyhow::Result<String> {
     let chain_str = chain_id.to_string();
     let output = Command::new("onchainos")
-        .args(["wallet", "balance", "--chain", &chain_str, "--output", "json"])
+        .args(["wallet", "addresses", "--chain", &chain_str])
         .output()?;
-    let json: Value = serde_json::from_str(&String::from_utf8_lossy(&output.stdout))?;
-    Ok(json["data"]["address"].as_str().unwrap_or("").to_string())
+    let json: Value = serde_json::from_str(&String::from_utf8_lossy(&output.stdout))
+        .map_err(|e| anyhow::anyhow!("wallet addresses parse error: {}", e))?;
+    let addr = json["data"]["evm"][0]["address"].as_str().unwrap_or("").to_string();
+    Ok(addr)
 }
 
 /// Submit a contract call via onchainos wallet contract-call.
@@ -19,7 +21,7 @@ pub async fn wallet_contract_call(
     to: &str,
     input_data: &str,
     from: Option<&str>,
-    amt: Option<u64>, // wei value attached (e.g. WETH deposit)
+    amt: Option<u64>,
     dry_run: bool,
 ) -> anyhow::Result<Value> {
     if dry_run {
@@ -53,7 +55,7 @@ pub async fn wallet_contract_call(
         args.extend_from_slice(&["--from", &from_str]);
     }
 
-    let output = Command::new("onchainos").args(&args).output()?;
+    let output = tokio::process::Command::new("onchainos").args(&args).output().await?;
     let stdout = String::from_utf8_lossy(&output.stdout);
     Ok(serde_json::from_str(&stdout)?)
 }
@@ -89,11 +91,11 @@ pub async fn erc20_approve(
     wallet_contract_call(chain_id, token_addr, &calldata, from, None, dry_run).await
 }
 
-/// wallet balance (supports --output json)
+/// wallet balance — returns native JSON output from onchainos.
 pub fn wallet_balance(chain_id: u64) -> anyhow::Result<Value> {
     let chain_str = chain_id.to_string();
     let output = Command::new("onchainos")
-        .args(["wallet", "balance", "--chain", &chain_str, "--output", "json"])
+        .args(["wallet", "balance", "--chain", &chain_str])
         .output()?;
     Ok(serde_json::from_str(&String::from_utf8_lossy(&output.stdout))?)
 }

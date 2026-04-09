@@ -66,7 +66,6 @@ pub async fn run(
         &calldata,
         Some(&wallet),
         None,
-        true, // --force required for DEX operations
         dry_run,
     )
     .await?;

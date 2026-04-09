@@ -1,14 +1,16 @@
 use std::process::Command;
 use serde_json::Value;
 
-/// Resolve the current logged-in wallet address for the given chain
+/// Resolve the current logged-in wallet address for the given EVM chain.
 pub fn resolve_wallet(chain_id: u64) -> anyhow::Result<String> {
     let chain_str = chain_id.to_string();
     let output = Command::new("onchainos")
-        .args(["wallet", "balance", "--chain", &chain_str, "--output", "json"])
+        .args(["wallet", "addresses", "--chain", &chain_str])
         .output()?;
-    let json: Value = serde_json::from_str(&String::from_utf8_lossy(&output.stdout))?;
-    Ok(json["data"]["address"].as_str().unwrap_or("").to_string())
+    let json: Value = serde_json::from_str(&String::from_utf8_lossy(&output.stdout))
+        .map_err(|e| anyhow::anyhow!("wallet addresses parse error: {}", e))?;
+    let addr = json["data"]["evm"][0]["address"].as_str().unwrap_or("").to_string();
+    Ok(addr)
 }
 
 /// Submit a transaction via `onchainos wallet contract-call`.
@@ -20,7 +22,6 @@ pub async fn wallet_contract_call(
     input_data: &str,
     from: Option<&str>,
     amt: Option<u64>,
-    force: bool,
     dry_run: bool,
 ) -> anyhow::Result<Value> {
     if dry_run {
@@ -58,11 +59,7 @@ pub async fn wallet_contract_call(
         args.extend_from_slice(&["--from", &from_owned]);
     }
 
-    if force {
-        args.push("--force");
-    }
-
-    let output = Command::new("onchainos").args(&args).output()?;
+    let output = tokio::process::Command::new("onchainos").args(&args).output().await?;
     let stdout = String::from_utf8_lossy(&output.stdout);
     Ok(serde_json::from_str(&stdout)?)
 }
@@ -89,5 +86,5 @@ pub async fn erc20_approve(
     let spender_padded = format!("{:0>64}", spender_clean);
     let amount_hex = format!("{:064x}", amount);
     let calldata = format!("0x095ea7b3{}{}", spender_padded, amount_hex);
-    wallet_contract_call(chain_id, token_addr, &calldata, from, None, true, dry_run).await
+    wallet_contract_call(chain_id, token_addr, &calldata, from, None, dry_run).await
 }

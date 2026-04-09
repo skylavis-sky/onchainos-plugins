@@ -7,10 +7,11 @@ pub const SOL_MINT: &str = "11111111111111111111111111111111";
 /// Resolve the current Solana wallet address (base58) via onchainos.
 fn resolve_wallet_solana() -> anyhow::Result<String> {
     let output = Command::new("onchainos")
-        .args(["wallet", "balance", "--chain", "501"])
+        .args(["wallet", "addresses", "--chain", "501"])
         .output()?;
-    let json: Value = serde_json::from_str(&String::from_utf8_lossy(&output.stdout))?;
-    let addr = json["data"]["details"][0]["tokenAssets"][0]["address"]
+    let json: Value = serde_json::from_str(&String::from_utf8_lossy(&output.stdout))
+        .map_err(|e| anyhow::anyhow!("wallet addresses parse error: {}", e))?;
+    let addr = json["data"]["solana"][0]["address"]
         .as_str()
         .unwrap_or("")
         .to_string();
@@ -28,8 +29,8 @@ pub async fn swap_execute_solana(
     readable_amount: &str,
     slippage_bps: u64,
 ) -> anyhow::Result<Value> {
-    // Convert bps to percent string (e.g. 100 bps → "1")
-    let slippage_pct = format!("{}", slippage_bps / 100);
+    // Convert bps to percent string (e.g. 100 bps → "1", 50 bps → "0.5")
+    let slippage_pct = format!("{}", slippage_bps as f64 / 100.0);
     let wallet = resolve_wallet_solana()?;
 
     let output = tokio::process::Command::new("onchainos")
