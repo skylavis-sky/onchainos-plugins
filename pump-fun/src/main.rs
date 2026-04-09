@@ -5,14 +5,13 @@ mod onchainos;
 use clap::{Parser, Subcommand};
 
 use commands::{
-    buy::BuyArgs, create_token::CreateTokenArgs, get_price::GetPriceArgs,
-    get_token_info::GetTokenInfoArgs, sell::SellArgs,
+    buy::BuyArgs, get_price::GetPriceArgs, get_token_info::GetTokenInfoArgs, sell::SellArgs,
 };
 
 #[derive(Parser, Debug)]
 #[command(
     name = "pump-fun",
-    about = "Plugin for pump.fun — buy, sell, create tokens on Solana bonding curves",
+    about = "Plugin for pump.fun — buy and sell tokens on Solana bonding curves via onchainos swap",
     version = "0.1.0"
 )]
 struct Cli {
@@ -32,14 +31,11 @@ enum Commands {
     /// Get current buy or sell price for a token
     GetPrice(GetPriceArgs),
 
-    /// Buy tokens on a pump.fun bonding curve (asks for confirmation before submitting)
+    /// Buy tokens on a pump.fun bonding curve via onchainos swap
     Buy(BuyArgs),
 
-    /// Sell tokens back to a pump.fun bonding curve (asks for confirmation before submitting)
+    /// Sell tokens back to a pump.fun bonding curve via onchainos swap
     Sell(SellArgs),
-
-    /// Create a new token on pump.fun with optional initial buy (asks for confirmation before submitting)
-    CreateToken(CreateTokenArgs),
 }
 
 #[tokio::main]
@@ -51,7 +47,6 @@ async fn main() {
         Commands::GetPrice(args) => commands::get_price::execute(args).await,
         Commands::Buy(args) => commands::buy::execute(args, cli.dry_run).await,
         Commands::Sell(args) => commands::sell::execute(args, cli.dry_run).await,
-        Commands::CreateToken(args) => commands::create_token::execute(args, cli.dry_run).await,
     };
 
     if let Err(e) = result {
