@@ -49,17 +49,16 @@ Polymarket is a prediction market platform on Polygon where users trade YES/NO o
 
 **Architecture:**
 - Read-only commands (`list-markets`, `get-market`, `get-positions`) — direct REST API calls; no wallet required
-- Write commands (`buy`, `sell`, `cancel`) — require Polymarket API credentials (L2 HMAC auth) + EIP-712 order signatures
+- Write commands (`buy`, `sell`, `cancel`) — use a local k256 signing key (auto-generated on first run) for EIP-712 order signatures and L2 HMAC auth
 - On-chain approvals — submitted via `onchainos wallet contract-call --chain 137 --force`
-- Order signing — EIP-712 typed data; see **Credential Setup** below
+- Order signing — EIP-712 typed data signed locally via `k256` crate; no onchainos signing required
 
-> **Known limitation (L4 trading)**: Polymarket's CLOB API and CTF Exchange require standard EIP-712 wallet signatures (ClobAuth for API keys, typed Order struct for trades). The current onchainos `wallet sign-message --type eip712` produces signatures in a different format that is not compatible with Polymarket's standard EIP-712 verification. `list-markets`, `get-market`, and `get-positions` work fully without auth. For `buy` / `sell` / `cancel`, credentials must be set via environment variables (see **Credential Setup** below).
-
-**How it works (with credentials set):**
-1. Plugin builds an EIP-712 Order struct and signs it using the stored credentials' signing key
-2. Signed order is submitted off-chain to Polymarket's CLOB with L2 HMAC headers
-3. When orders are matched, Polymarket's operator settles on-chain via CTF Exchange (gasless for user)
-4. USDC.e flows from buyer's wallet; conditional tokens flow from seller's wallet
+**How it works:**
+1. On first trading command, a local signing key is auto-generated and stored at `~/.config/polymarket/signing_key.hex` (0600 permissions)
+2. API credentials are auto-derived from that signing key via Polymarket's CLOB API and cached at `~/.config/polymarket/creds.json`
+3. Plugin signs EIP-712 Order structs locally and submits them off-chain to Polymarket's CLOB with L2 HMAC headers
+4. When orders are matched, Polymarket's operator settles on-chain via CTF Exchange (gasless for user)
+5. USDC.e flows from buyer's wallet; conditional tokens flow from seller's wallet
 
 ---
 
@@ -71,7 +70,7 @@ Before executing any command, verify:
 2. **Wallet connected**: `onchainos wallet status` — confirm logged in and active wallet is set on Polygon (chain 137)
 
 For trading commands (`buy`, `sell`, `cancel`), also check:
-3. **API credentials**: Verify `POLYMARKET_API_KEY`, `POLYMARKET_SECRET`, `POLYMARKET_PASSPHRASE` are set (see **Credential Setup**)
+3. **Credentials**: Auto-derived on first run — no setup needed. If issues arise, check `~/.config/polymarket/creds.json` and `~/.config/polymarket/signing_key.hex` exist with `0600` permissions.
 4. **USDC.e balance** (for buy): Check wallet has sufficient USDC.e on Polygon
 
 If the wallet is not connected, output:
@@ -172,7 +171,7 @@ polymarket buy --market-id <id> --outcome <yes|no> --amount <usdc> [--price <0-1
 | `--order-type` | `GTC` (resting limit) or `FOK` (fill-or-kill) | `GTC` |
 | `--approve` | Force USDC.e approval before placing | false |
 
-**Auth required:** Yes — active onchainos wallet (signs via `onchainos wallet sign-message`)
+**Auth required:** Yes — local signing key (auto-generated on first run; no onchainos signing)
 
 **On-chain ops:** If USDC.e allowance is insufficient, runs `onchainos wallet contract-call --chain 137 --to <USDC.e> --input-data <approve_calldata> --force` automatically.
 
@@ -204,7 +203,7 @@ polymarket sell --market-id <id> --outcome <yes|no> --shares <amount> [--price <
 | `--order-type` | `GTC` (resting limit) or `FOK` (fill-or-kill) | `GTC` |
 | `--approve` | Force CTF token approval before placing | false |
 
-**Auth required:** Yes — active onchainos wallet (signs via `onchainos wallet sign-message`)
+**Auth required:** Yes — local signing key (auto-generated on first run; no onchainos signing)
 
 **On-chain ops:** If CTF token allowance is insufficient, runs `onchainos wallet contract-call --chain 137 --to <CTF> --input-data <setApprovalForAll_calldata> --force` automatically.
 
@@ -233,7 +232,7 @@ polymarket cancel --all
 | `--market` | Cancel all orders for a specific market (condition_id) |
 | `--all` | Cancel ALL open orders (use with extreme caution) |
 
-**Auth required:** Yes — active onchainos wallet (signs via `onchainos wallet sign-message`)
+**Auth required:** Yes — local signing key (auto-generated on first run; no onchainos signing)
 
 **Output fields:** `canceled` (list of cancelled order IDs), `not_canceled` (map of failed IDs to reasons)
 
@@ -250,7 +249,14 @@ polymarket cancel --all
 
 `list-markets`, `get-market`, and `get-positions` require no authentication.
 
-For trading commands, Polymarket API credentials must be set once:
+**No manual credential setup required.** On the first trading command, the plugin:
+1. Auto-generates a local k256 signing key at `~/.config/polymarket/signing_key.hex` (0600 permissions)
+2. Derives Polymarket API credentials from that key via the CLOB API
+3. Caches them at `~/.config/polymarket/creds.json` (0600 permissions) for all future calls
+
+The signing key address (an Ethereum address derived from the local key) is used as the Polymarket trading identity. **No wallet private key is ever required or stored.**
+
+**Override via environment variables** (optional — takes precedence over cached credentials):
 
 ```bash
 export POLYMARKET_API_KEY=<uuid>
@@ -258,31 +264,15 @@ export POLYMARKET_SECRET=<base64url-secret>
 export POLYMARKET_PASSPHRASE=<passphrase>
 ```
 
-**Generating credentials** using [py-clob-client](https://github.com/Polymarket/py-clob-client):
-
-```bash
-pip install py-clob-client
-python3 -c "
-from py_clob_client.client import ClobClient
-client = ClobClient('https://clob.polymarket.com', key='<YOUR_PRIVATE_KEY>', chain_id=137)
-creds = client.create_or_derive_api_creds()
-print('POLYMARKET_API_KEY=' + creds.api_key)
-print('POLYMARKET_SECRET=' + creds.api_secret)
-print('POLYMARKET_PASSPHRASE=' + creds.passphrase)
-"
-```
-
-Or retrieve credentials from an existing Polymarket account via the [Polymarket API docs](https://docs.polymarket.com).
-
 ## Environment Variables
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `POLYMARKET_API_KEY` | Required for trading | Polymarket CLOB API key UUID |
-| `POLYMARKET_SECRET` | Required for trading | Base64url-encoded HMAC secret for L2 auth |
-| `POLYMARKET_PASSPHRASE` | Required for trading | CLOB API passphrase |
+| `POLYMARKET_API_KEY` | Optional override | Polymarket CLOB API key UUID |
+| `POLYMARKET_SECRET` | Optional override | Base64url-encoded HMAC secret for L2 auth |
+| `POLYMARKET_PASSPHRASE` | Optional override | CLOB API passphrase |
 
-**Credential storage:** Once set via env vars, credentials are also cached at `~/.config/polymarket/creds.json` for reuse across sessions. The file is written with `0600` permissions (owner read/write only). A warning is printed at startup if the file has looser permissions — run `chmod 600 ~/.config/polymarket/creds.json` to fix. Credentials remain in plaintext; avoid storing them on shared machines.
+**Credential storage:** Credentials are cached at `~/.config/polymarket/creds.json` with `0600` permissions (owner read/write only). The signing key is stored at `~/.config/polymarket/signing_key.hex` with `0600` permissions. A warning is printed at startup if either file has looser permissions — run `chmod 600 <path>` to fix. Both files remain in plaintext; avoid storing them on shared machines.
 
 ---
 

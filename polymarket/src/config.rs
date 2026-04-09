@@ -1,6 +1,7 @@
 use anyhow::{Context, Result};
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
+#[cfg(unix)]
 use std::os::unix::fs::PermissionsExt;
 
 /// Persisted API credentials derived via L1 (ClobAuth EIP-712) auth.
@@ -35,7 +36,8 @@ pub fn load_credentials() -> Result<Option<Credentials>> {
     if !path.exists() {
         return Ok(None);
     }
-    // Warn if file is readable by group/other
+    // Warn if file is readable by group/other (Unix only)
+    #[cfg(unix)]
     if let Ok(meta) = std::fs::metadata(&path) {
         let mode = meta.permissions().mode();
         if mode & 0o077 != 0 {
@@ -63,7 +65,8 @@ pub fn save_credentials(creds: &Credentials) -> Result<()> {
     let data = serde_json::to_string_pretty(creds)?;
     std::fs::write(&path, &data)
         .with_context(|| format!("writing {}", path.display()))?;
-    // Restrict to owner read/write only (no group/other access)
+    // Restrict to owner read/write only (Unix only — Windows uses ACLs)
+    #[cfg(unix)]
     std::fs::set_permissions(&path, std::fs::Permissions::from_mode(0o600))
         .with_context(|| format!("setting permissions on {}", path.display()))?;
     Ok(())
@@ -129,6 +132,7 @@ pub fn get_or_create_signing_key() -> Result<k256::ecdsa::SigningKey> {
     }
     std::fs::write(&path, hex::encode(key_bytes))
         .with_context(|| format!("writing signing key to {}", path.display()))?;
+    #[cfg(unix)]
     std::fs::set_permissions(&path, std::fs::Permissions::from_mode(0o600))?;
 
     let addr = signing_key_address(&key);
