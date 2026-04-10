@@ -49,7 +49,7 @@ pub fn get_market_config(chain_id: u64, market: &str) -> anyhow::Result<MarketCo
             base_asset: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
             base_asset_decimals: 6,
             base_asset_symbol: "USDC",
-            rpc_url: "https://polygon-rpc.com",
+            rpc_url: "https://polygon-bor-rpc.publicnode.com",
         }),
         _ => anyhow::bail!(
             "Unsupported chain_id={} market={}. Supported: chain 1/8453/42161/137 market usdc",
