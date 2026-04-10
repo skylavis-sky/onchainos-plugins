@@ -26,16 +26,20 @@ pub async fn run(args: RemoveLiquidityArgs) -> Result<serde_json::Value> {
     let native_b = is_native(&args.token_b);
     let native_a = is_native(&args.token_a);
 
-    // Resolve wallet
-    let wallet = if args.dry_run {
-        "0x0000000000000000000000000000000000000000".to_string()
-    } else {
+    // Resolve wallet.
+    // For reads (LP balance, allowance) we want the real address even in dry-run so the
+    // estimates are meaningful.  For TX construction onchainos receives args.from directly.
+    // Fall back to the zero address only when no real wallet is available in dry-run.
+    let wallet = {
         let w = args.from.clone()
-            .unwrap_or_else(|| onchainos::resolve_wallet(args.chain_id).unwrap_or_default());
-        if w.is_empty() {
-            anyhow::bail!("Cannot resolve wallet address. Pass --from or ensure onchainos is logged in.");
+            .or_else(|| onchainos::resolve_wallet(args.chain_id).ok().filter(|s| !s.is_empty()));
+        match (w, args.dry_run) {
+            (Some(addr), _) => addr,
+            (None, true) => "0x0000000000000000000000000000000000000000".to_string(),
+            (None, false) => anyhow::bail!(
+                "Cannot resolve wallet address. Pass --from or ensure onchainos is logged in."
+            ),
         }
-        w
     };
 
     let token_a_addr = if native_a {
@@ -78,8 +82,10 @@ pub async fn run(args: RemoveLiquidityArgs) -> Result<serde_json::Value> {
     };
 
     let liq_u128 = if liquidity == 0 { 1u128 } else { liquidity };
-    let amount_a_expected = reserve_a * liq_u128 / total_supply;
-    let amount_b_expected = reserve_b * liq_u128 / total_supply;
+    // Use checked_mul and fall back to f64 so large pools (e.g. BNB/USDT with
+    // reserve > 10^22) don't silently overflow u128 and produce garbage estimates.
+    let amount_a_expected = safe_mul_div(reserve_a, liq_u128, total_supply);
+    let amount_b_expected = safe_mul_div(reserve_b, liq_u128, total_supply);
     let amount_a_min = amount_a_expected * (10000 - args.slippage_bps) as u128 / 10000;
     let amount_b_min = amount_b_expected * (10000 - args.slippage_bps) as u128 / 10000;
 
@@ -204,4 +210,17 @@ fn build_remove_liquidity_eth(
 
 fn pad_addr(addr: &str) -> String {
     format!("{:0>64}", addr.trim_start_matches("0x").trim_start_matches("0X"))
+}
+
+/// Compute a * b / c without overflowing u128.
+/// Falls back to f64 arithmetic (loses ~15 significant digits) for values that
+/// would overflow — acceptable for displaying estimated withdrawal amounts.
+fn safe_mul_div(a: u128, b: u128, c: u128) -> u128 {
+    if c == 0 {
+        return 0;
+    }
+    match a.checked_mul(b) {
+        Some(product) => product / c,
+        None => ((a as f64) * (b as f64) / (c as f64)) as u128,
+    }
 }
