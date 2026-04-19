@@ -1,0 +1,31 @@
+schema_version: 1
+name: jupiter
+version: "0.1.0"
+description: "Solana DEX aggregator — swap any SPL token at best price via multi-router aggregation on Jupiter"
+author:
+  name: skylavis-sky
+  github: skylavis-sky
+category: defi-protocol
+tags:
+  - swap
+  - dex-aggregator
+  - solana
+  - routing
+  - spl-token
+license: MIT
+
+components:
+  skill:
+    dir: skills/jupiter
+
+build:
+  lang: rust
+  binary_name: jupiter
+  source_repo: skylavis-sky/onchainos-plugins
+  source_commit: "0000000000000000000000000000000000000000"
+  source_dir: jupiter
+
+api_calls:
+  - "https://api.jup.ag/swap/v2/order"
+  - "https://api.jup.ag/price/v3"
+  - "https://tokens.jup.ag/tokens"
