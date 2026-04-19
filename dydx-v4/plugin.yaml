@@ -1,0 +1,30 @@
+schema_version: 1
+name: dydx-v4
+version: "0.1.0"
+description: "dYdX V4 — decentralised perpetuals exchange on a Cosmos appchain. Query markets, positions and balances via Indexer REST; bridge DYDX tokens from Ethereum."
+author:
+  name: skylavis-sky
+  github: skylavis-sky
+category: trading-strategy
+tags:
+  - perps
+  - derivatives
+  - cosmos
+  - orderbook
+  - leverage
+license: MIT
+
+components:
+  skill:
+    dir: skills/dydx-v4
+
+build:
+  lang: rust
+  binary_name: dydx-v4
+  source_repo: skylavis-sky/onchainos-plugins
+  source_commit: "0000000000000000000000000000000000000000"
+  source_dir: dydx-v4
+
+api_calls:
+  - "https://indexer.dydx.trade/v4"
+  - "https://dydx.trade"
