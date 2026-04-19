@@ -1,0 +1,36 @@
+schema_version: 1
+name: uniswap-v3
+version: "0.1.0"
+description: "Swap tokens and manage concentrated liquidity positions on Uniswap V3 - the leading CLMM across Ethereum and L2s"
+author:
+  name: skylavis-sky
+  github: skylavis-sky
+category: defi-protocol
+tags:
+  - dex
+  - swap
+  - liquidity
+  - clmm
+  - evm
+  - uniswap
+  - v3
+  - amm
+license: MIT
+
+components:
+  skill:
+    dir: skills/uniswap-v3
+
+build:
+  lang: rust
+  binary_name: uniswap-v3
+  source_repo: skylavis-sky/onchainos-plugins
+  source_commit: "0000000000000000000000000000000000000000"
+  source_dir: uniswap-v3
+
+api_calls:
+  - "https://ethereum.publicnode.com"
+  - "https://arbitrum-one-rpc.publicnode.com"
+  - "https://base-rpc.publicnode.com"
+  - "https://optimism.publicnode.com"
+  - "https://polygon-bor-rpc.publicnode.com"
