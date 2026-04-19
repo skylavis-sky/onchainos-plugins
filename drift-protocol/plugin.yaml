@@ -1,0 +1,31 @@
+schema_version: 1
+name: drift-protocol
+version: "0.1.0"
+description: "Drift Protocol — perpetual futures DEX and lending on Solana. Read ops: get-balance, get-markets, get-funding-rates. Write ops stubbed pending relaunch after 2026-04-01 exploit."
+author:
+  name: skylavis-sky
+  github: skylavis-sky
+category: defi-protocol
+tags:
+  - perpetuals
+  - solana
+  - lending
+  - spot
+  - orderbook
+license: MIT
+
+components:
+  skill:
+    dir: skills/drift-protocol
+
+build:
+  lang: rust
+  binary_name: drift-protocol
+  source_repo: skylavis-sky/onchainos-plugins
+  source_commit: "0000000000000000000000000000000000000000"
+  source_dir: drift-protocol
+
+api_calls:
+  - "https://dlob.drift.trade"
+  - "https://data.api.drift.trade"
+  - "https://drift.trade"
