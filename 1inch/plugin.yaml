@@ -1,0 +1,32 @@
+schema_version: 1
+name: 1inch
+version: "0.1.0"
+description: "Swap tokens at the best rates across 200+ DEXs via the 1inch aggregation protocol -- supports Ethereum, Arbitrum, Base, BSC, and Polygon"
+author:
+  name: skylavis-sky
+  github: skylavis-sky
+category: defi-protocol
+tags:
+  - dex
+  - swap
+  - aggregator
+  - evm
+  - 1inch
+  - best-price
+  - routing
+license: MIT
+
+components:
+  skill:
+    dir: skills/1inch
+
+build:
+  lang: rust
+  binary_name: 1inch
+  source_repo: skylavis-sky/onchainos-plugins
+  source_commit: "0000000000000000000000000000000000000000"
+  source_dir: 1inch
+
+api_calls:
+  - "https://api.1inch.dev/swap/v6.0"
+  - "https://portal.1inch.dev"
